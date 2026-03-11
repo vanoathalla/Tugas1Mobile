@@ -137,7 +137,7 @@ class _BilanganPageState extends State<BilanganPage> {
               style: const TextStyle(
                 fontSize: 18,
                 fontWeight: FontWeight.w600,
-                color: Colors.black800,
+                color: Colors.black87,
               ),
             ),
           ),

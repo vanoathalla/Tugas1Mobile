@@ -126,7 +126,7 @@ class DashboardPage extends StatelessWidget {
               style: const TextStyle(
                 fontWeight: FontWeight.bold,
                 fontSize: 16,
-                color: Colors.black800,
+                color: Colors.black87,
               ),
               textAlign: TextAlign.center,
             ),

@@ -52,25 +52,24 @@ class _StopwatchPageState extends State<StopwatchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Stopwatch Kalcer')),
+      appBar: AppBar(title: const Text('Stopwatch')),
       body: Padding(
         padding: const EdgeInsets.all(30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Tampilan Waktu yang modern
+            // Tampilan Waktu yang modern (const ditiadakan karna warna pake shade array)
             Text(
               _formatWaktu(_stopwatch.elapsedMilliseconds),
-              style: const TextStyle(
+              style: TextStyle(
                 fontSize: 72,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'monospace',
-                color: Colors.blueGrey800,
+                color: Colors.blueGrey[800],
               ),
             ),
             const SizedBox(height: 60),
 
-            // Tombol Kontrol responsif ala iOS
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [

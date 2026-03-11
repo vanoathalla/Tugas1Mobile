@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-// Ini buat manggil file-file yang ada di folder screens
 import 'screens/login_page.dart';
 import 'screens/dashboard_page.dart';
 import 'screens/kelompok_page.dart';
@@ -18,51 +17,44 @@ class TugasMobileApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    // Kite pake skema warna yang lebih kaya biar kalcer
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Tugas Mobile Kalcer',
       theme: ThemeData(
-        // Tema utama Slate & Peach
-        primarySwatch: Colors.blueGrey,
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.blueGrey),
+        useMaterial3: true,
         scaffoldBackgroundColor: Colors.white,
-        cardTheme: CardTheme(
-          elevation: 5,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          shadowColor: Colors.black.withOpacity(0.1),
-        ),
+
         appBarTheme: const AppBarTheme(
           backgroundColor: Colors.white,
-          foregroundColor: Colors.black,
+          foregroundColor: Colors.black87,
           elevation: 0,
           titleTextStyle: TextStyle(
-            color: Colors.black,
+            color: Colors.black87,
             fontSize: 22,
             fontWeight: FontWeight.bold,
           ),
-          iconTheme: IconThemeData(color: Colors.black),
+          iconTheme: IconThemeData(color: Colors.black87),
         ),
-        // Modern Input Decoration Theme
+
         inputDecorationTheme: InputDecorationTheme(
           filled: true,
-          fillColor: Colors.blueGrey[50],
+          fillColor: const Color(0xFFECEFF1),
           border: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(15),
-            borderSide: BorderSide(color: Colors.blueGrey[400]!, width: 2),
+            borderSide: const BorderSide(color: Colors.blueGrey, width: 2),
           ),
-          prefixIconColor: Colors.blueGrey[400],
-          suffixIconColor: Colors.blueGrey[400],
+          prefixIconColor: Colors.blueGrey,
+          suffixIconColor: Colors.blueGrey,
         ),
-        // Modern Button Theme
+
         elevatedButtonTheme: ElevatedButtonThemeData(
           style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.blueGrey[900],
+            backgroundColor: const Color(0xFF263238),
             foregroundColor: Colors.white,
             padding: const EdgeInsets.symmetric(horizontal: 30, vertical: 15),
             shape: RoundedRectangleBorder(
@@ -73,9 +65,8 @@ class TugasMobileApp extends StatelessWidget {
           ),
         ),
       ),
-      // Halaman pertama yang dibuka pas app jalan
+
       initialRoute: '/',
-      // Daftar rute halamannye
       routes: {
         '/': (context) => const LoginPage(),
         '/dashboard': (context) => const DashboardPage(),

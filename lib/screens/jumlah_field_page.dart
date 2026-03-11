@@ -4,6 +4,30 @@ class JumlahFieldPage extends StatefulWidget {
   const JumlahFieldPage({super.key});
 
   @override
+  State<JumlahFieldPage> createState() => _JumlahFieldPageState();
+}
+
+class _JumlahFieldPageState extends State<JumlahFieldPage> {
+  final TextEditingController _inputController = TextEditingController();
+  String _hasil = '0';
+
+  void _hitungTotal() {
+    // Kite pisahin angkanye berdasarkan koma atau spasi
+    List<String> angkaString = _inputController.text.split(RegExp(r'[,\s]+'));
+    double total = 0;
+
+    for (var str in angkaString) {
+      if (str.isNotEmpty) {
+        total += double.tryParse(str) ?? 0;
+      }
+    }
+
+    setState(() {
+      _hasil = total.toString();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(title: const Text('Jumlah Total Field')),
@@ -74,24 +98,5 @@ class JumlahFieldPage extends StatefulWidget {
         ),
       ),
     );
-  }
-
-  final TextEditingController _inputController = TextEditingController();
-  String _hasil = '0';
-
-  void _hitungTotal() {
-    // Kite pisahin angkanye berdasarkan koma atau spasi
-    List<String> angkaString = _inputController.text.split(RegExp(r'[,\s]+'));
-    double total = 0;
-
-    for (var str in angkaString) {
-      if (str.isNotEmpty) {
-        total += double.tryParse(str) ?? 0;
-      }
-    }
-
-    setState(() {
-      _hasil = total.toString();
-    });
   }
 }

@@ -26,7 +26,7 @@ class _LoginPageState extends State<LoginPage> {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(20),
           ),
-          title: const Text('Login Gagal, Bhap!'),
+          title: const Text('Login Gagal!'),
           content: const Text(
             'Username atau Password salah ye! Coba pake "admin"',
           ),
@@ -75,13 +75,13 @@ class _LoginPageState extends State<LoginPage> {
                   style: TextStyle(
                     fontSize: 32,
                     fontWeight: FontWeight.w900,
-                    color: Colors.black800,
+                    color: Colors.black87,
                   ),
                 ),
                 const Text(
                   'Pemrograman Aplikasi Mobile',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.black400),
+                  style: TextStyle(fontSize: 16, color: Colors.black54),
                 ),
                 const SizedBox(height: 50),
 

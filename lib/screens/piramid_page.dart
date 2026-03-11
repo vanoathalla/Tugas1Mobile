@@ -160,7 +160,7 @@ class _PiramidPageState extends State<PiramidPage> {
             style: const TextStyle(
               fontSize: 24,
               fontWeight: FontWeight.bold,
-              color: Colors.black800,
+              color: Colors.black87,
             ),
           ),
         ],
