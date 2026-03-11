@@ -31,20 +31,18 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Kalkulator +/-'),
-        backgroundColor: Colors.teal[700],
-      ),
-      body: Padding(
+      appBar: AppBar(title: const Text('Kalkulator +/-')),
+      body: SingleChildScrollView(
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
+            // Input Fields yang modern
             TextField(
               controller: _angka1Controller,
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Angka Pertama',
-                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.looks_one_outlined),
               ),
             ),
             const SizedBox(height: 16),
@@ -53,40 +51,93 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
               keyboardType: TextInputType.number,
               decoration: const InputDecoration(
                 labelText: 'Angka Kedua',
-                border: OutlineInputBorder(),
+                prefixIcon: Icon(Icons.looks_two_outlined),
               ),
             ),
-            const SizedBox(height: 24),
+            const SizedBox(height: 32),
+
+            // Tombol operasi responsif ala iOS
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: () => _hitung('+'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.teal[800],
-                    minimumSize: const Size(100, 50),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _hitung('+'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey[900],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      minimumSize: const Size(0, 60),
+                    ),
+                    child: const Text(
+                      '+',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  child: const Text('+', style: TextStyle(fontSize: 24)),
                 ),
-                ElevatedButton(
-                  onPressed: () => _hitung('-'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange[800],
-                    minimumSize: const Size(100, 50),
+                const SizedBox(width: 20),
+                Expanded(
+                  child: ElevatedButton(
+                    onPressed: () => _hitung('-'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.blueGrey[900],
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      minimumSize: const Size(0, 60),
+                    ),
+                    child: const Text(
+                      '-',
+                      style: TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.bold,
+                      ),
+                    ),
                   ),
-                  child: const Text('-', style: TextStyle(fontSize: 24)),
                 ),
               ],
             ),
-            const SizedBox(height: 32),
-            const Text('Hasil:', style: TextStyle(fontSize: 18)),
-            const SizedBox(height: 8),
-            Text(
-              _hasil,
-              style: const TextStyle(
-                fontSize: 48,
-                fontWeight: FontWeight.bold,
-                color: Colors.teal,
+            const SizedBox(height: 50),
+
+            // Card Hasil yang modern
+            Container(
+              padding: const EdgeInsets.all(30),
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(30),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.1),
+                    blurRadius: 10,
+                    offset: const Offset(0, 5),
+                  ),
+                ],
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    'Hasil Akhir:',
+                    style: TextStyle(
+                      fontSize: 18,
+                      color: Colors.blueGrey,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
+                  const SizedBox(height: 16),
+                  Text(
+                    _hasil,
+                    style: const TextStyle(
+                      fontSize: 56,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.teal,
+                    ),
+                  ),
+                ],
               ),
             ),
           ],

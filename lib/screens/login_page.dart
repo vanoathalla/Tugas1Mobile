@@ -10,6 +10,7 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  bool _obscurePassword = true;
 
   void _login() {
     // Validasi super simpel nih Mon, asalkan diisi "admin" dua-duanye bisa masuk
@@ -18,9 +19,26 @@ class _LoginPageState extends State<LoginPage> {
       // Pindah ke halaman dashboard dan hapus history login biar ga bisa di-back
       Navigator.pushReplacementNamed(context, '/dashboard');
     } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(
-          content: Text('Username atau Password salah ye! Coba pake "admin"'),
+      // Alert dialog yang cakep
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          title: const Text('Login Gagal, Bhap!'),
+          content: const Text(
+            'Username atau Password salah ye! Coba pake "admin"',
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text(
+                'Siap!',
+                style: TextStyle(color: Colors.orange),
+              ),
+            ),
+          ],
         ),
       );
     }
@@ -28,51 +46,97 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Kite pake layout responsif
+    final screenWidth = MediaQuery.of(context).size.width;
+
     return Scaffold(
-      backgroundColor: Colors.teal[700],
+      backgroundColor: Colors.blueGrey[50],
       body: Center(
         child: SingleChildScrollView(
-          child: Card(
-            margin: const EdgeInsets.all(24.0),
-            child: Padding(
-              padding: const EdgeInsets.all(24.0),
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Login User',
-                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold),
+          padding: const EdgeInsets.all(30.0),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(
+              maxWidth: 400,
+            ), // Biar ga kegedean di tablet
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                // Ilustrasi logo yang kalcer (pake icon aje biar simpel kodingan)
+                Icon(
+                  Icons.dashboard_customize_outlined,
+                  size: 100,
+                  color: Colors.blueGrey[800],
+                ),
+                const SizedBox(height: 10),
+                const Text(
+                  'Tugas Mobile App',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 32,
+                    fontWeight: FontWeight.w900,
+                    color: Colors.black800,
                   ),
-                  const SizedBox(height: 20),
-                  TextField(
-                    controller: _usernameController,
-                    decoration: const InputDecoration(
-                      labelText: 'Username',
-                      prefixIcon: Icon(Icons.person),
-                      border: OutlineInputBorder(),
+                ),
+                const Text(
+                  'Pemrograman Aplikasi Mobile',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(fontSize: 16, color: Colors.black400),
+                ),
+                const SizedBox(height: 50),
+
+                // Input username
+                TextField(
+                  controller: _usernameController,
+                  decoration: const InputDecoration(
+                    labelText: 'Username',
+                    prefixIcon: Icon(Icons.person_outline),
+                  ),
+                ),
+                const SizedBox(height: 16),
+
+                // Input password
+                TextField(
+                  controller: _passwordController,
+                  obscureText:
+                      _obscurePassword, // Biar passwordnye jadi bintang-bintang
+                  decoration: InputDecoration(
+                    labelText: 'Password',
+                    prefixIcon: Icon(Icons.lock_outline),
+                    suffixIcon: IconButton(
+                      icon: Icon(
+                        _obscurePassword
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                      ),
+                      onPressed: () {
+                        setState(() {
+                          _obscurePassword = !_obscurePassword;
+                        });
+                      },
                     ),
                   ),
-                  const SizedBox(height: 16),
-                  TextField(
-                    controller: _passwordController,
-                    obscureText: true, // Biar passwordnye jadi bintang-bintang
-                    decoration: const InputDecoration(
-                      labelText: 'Password',
-                      prefixIcon: Icon(Icons.lock),
-                      border: OutlineInputBorder(),
-                    ),
+                ),
+                const SizedBox(height: 32),
+
+                // Tombol Log in
+                ElevatedButton(
+                  onPressed: _login,
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.blueGrey[900], // Sesuai tema modern
                   ),
-                  const SizedBox(height: 24),
-                  ElevatedButton(
-                    onPressed: _login,
-                    style: ElevatedButton.styleFrom(
-                      minimumSize: const Size(double.infinity, 50),
-                      backgroundColor: Colors.teal[800],
-                    ),
-                    child: const Text('Log In'),
+                  child: const Text('Log In', style: TextStyle(fontSize: 18)),
+                ),
+                const SizedBox(height: 16),
+                const Text(
+                  'Lupa Kata Sandi?',
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    color: Colors.blueGrey,
+                    fontWeight: FontWeight.w600,
                   ),
-                ],
-              ),
+                ),
+              ],
             ),
           ),
         ),

@@ -52,48 +52,78 @@ class _StopwatchPageState extends State<StopwatchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        title: const Text('Stopwatch'),
-        backgroundColor: Colors.teal[700],
-      ),
-      body: Center(
+      appBar: AppBar(title: const Text('Stopwatch Kalcer')),
+      body: Padding(
+        padding: const EdgeInsets.all(30),
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            // Tampilan Waktu yang modern
             Text(
               _formatWaktu(_stopwatch.elapsedMilliseconds),
               style: const TextStyle(
-                fontSize: 60,
+                fontSize: 72,
                 fontWeight: FontWeight.bold,
                 fontFamily: 'monospace',
+                color: Colors.blueGrey800,
               ),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 60),
+
+            // Tombol Kontrol responsif ala iOS
             Row(
-              mainAxisAlignment: MainAxisAlignment.center,
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
-                ElevatedButton(
-                  onPressed: _stopwatch.isRunning ? null : _startTimer,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.teal),
-                  child: const Text('Start'),
+                _buildActionButton(
+                  'Start',
+                  Icons.play_arrow_outlined,
+                  Colors.teal,
+                  _stopwatch.isRunning ? null : _startTimer,
                 ),
-                const SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: _stopwatch.isRunning ? _stopTimer : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.orange,
-                  ),
-                  child: const Text('Stop'),
+                const SizedBox(width: 20),
+                _buildActionButton(
+                  'Stop',
+                  Icons.stop_outlined,
+                  Colors.orange,
+                  _stopwatch.isRunning ? _stopTimer : null,
                 ),
-                const SizedBox(width: 16),
-                ElevatedButton(
-                  onPressed: _resetTimer,
-                  style: ElevatedButton.styleFrom(backgroundColor: Colors.red),
-                  child: const Text('Reset'),
+                const SizedBox(width: 20),
+                _buildActionButton(
+                  'Reset',
+                  Icons.refresh_outlined,
+                  Colors.redAccent,
+                  _resetTimer,
                 ),
               ],
             ),
           ],
+        ),
+      ),
+    );
+  }
+
+  Widget _buildActionButton(
+    String label,
+    IconData icon,
+    Color color,
+    VoidCallback? onPressed,
+  ) {
+    return Expanded(
+      child: ElevatedButton.icon(
+        icon: Icon(
+          icon,
+          color: onPressed != null ? Colors.white : Colors.blueGrey[400],
+        ),
+        label: Text(label),
+        onPressed: onPressed,
+        style: ElevatedButton.styleFrom(
+          backgroundColor: color,
+          foregroundColor: Colors.white,
+          elevation: onPressed != null ? 3 : 0,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20),
+          ),
+          minimumSize: const Size(0, 60),
         ),
       ),
     );
