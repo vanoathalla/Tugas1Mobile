@@ -14,6 +14,14 @@ class _PiramidPageState extends State<PiramidPage> {
   String _hasilVolume = '0.00';
   String _hasilLuas = '0.00';
 
+  // OPTIMASI 1: Wajib ada dispose untuk membersihkan memori controller
+  @override
+  void dispose() {
+    _sisiController.dispose();
+    _tinggiController.dispose();
+    super.dispose();
+  }
+
   void _hitungPiramid() {
     double sisi = double.tryParse(_sisiController.text) ?? 0;
     double tinggi = double.tryParse(_tinggiController.text) ?? 0;
@@ -44,18 +52,24 @@ class _PiramidPageState extends State<PiramidPage> {
             TextField(
               controller: _sisiController,
               keyboardType: TextInputType.number,
+              maxLength:
+                  15, // OPTIMASI 2: Batasan presisi maksimal tipe data double
               decoration: const InputDecoration(
                 labelText: 'Panjang Sisi Alas (a)',
                 prefixIcon: Icon(Icons.line_weight_outlined),
+                //counterText: "", // Sembunyiin teks counter
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _tinggiController,
               keyboardType: TextInputType.number,
+              maxLength:
+                  15, // OPTIMASI 2: Batasan presisi maksimal tipe data double
               decoration: const InputDecoration(
                 labelText: 'Tinggi Piramida (h)',
                 prefixIcon: Icon(Icons.height_outlined),
+                //counterText: "", // Sembunyiin teks counter
               ),
             ),
             const SizedBox(height: 32),
@@ -64,7 +78,9 @@ class _PiramidPageState extends State<PiramidPage> {
             ElevatedButton(
               onPressed: _hitungPiramid,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueGrey[900],
+                backgroundColor: Colors.blueGrey,
+                foregroundColor: Colors
+                    .white, // OPTIMASI 3: Biar teks ga nyaru sama tombol gelap
                 minimumSize: const Size(double.infinity, 55),
               ),
               child: const Text(
@@ -74,7 +90,7 @@ class _PiramidPageState extends State<PiramidPage> {
             ),
             const SizedBox(height: 40),
 
-            // Tampilan Hasil Modern ala iOS
+            // Tampilan Hasil Modern ala iOS (TIDAK DIUBAH)
             _buildResultCard(context),
           ],
         ),

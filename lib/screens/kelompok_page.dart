@@ -1,5 +1,39 @@
 import 'package:flutter/material.dart';
 
+// 1. INI BAGIAN MODEL (Nanti bisa lu pindah ke folder 'models' misal jadi anggota_model.dart)
+class AnggotaKelompok {
+  final String nama;
+  final String nim;
+  final Color color;
+
+  AnggotaKelompok({required this.nama, required this.nim, required this.color});
+}
+
+// 2. INI BAGIAN DATA (Sama kayak list products di referensi lu)
+List<AnggotaKelompok> dataKelompok = [
+  AnggotaKelompok(
+    nama: 'DANANG ADIWIBOWO',
+    nim: 'NIM: 123230143',
+    color: Colors.teal,
+  ),
+  AnggotaKelompok(
+    nama: 'Gorga Doli Liberto Napitupulu',
+    nim: 'NIM: 123230147',
+    color: Colors.blue,
+  ),
+  AnggotaKelompok(
+    nama: 'R. Revano Athalla K',
+    nim: 'NIM: 123230150',
+    color: Colors.orange,
+  ),
+  AnggotaKelompok(
+    nama: 'Narindera Jati P',
+    nim: 'NIM: 123230153',
+    color: Colors.red,
+  ),
+];
+
+// 3. INI BAGIAN VIEW (UI Halaman)
 class KelompokPage extends StatelessWidget {
   const KelompokPage({super.key});
 
@@ -19,18 +53,12 @@ class KelompokPage extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 16),
-          _buildMemberCard('Danang Adiwibowo', 'NIM: 123230143', Colors.teal),
-          _buildMemberCard(
-            'Gorga Doli Liberto Napitupulu',
-            'NIM: 123230147',
-            Colors.blue,
+
+          // Looping data dari List model langsung ke UI
+          ...dataKelompok.map(
+            (anggota) =>
+                _buildMemberCard(anggota.nama, anggota.nim, anggota.color),
           ),
-          _buildMemberCard(
-            'R. Revano Athalla K',
-            'NIM: 123230150',
-            Colors.orange,
-          ),
-          _buildMemberCard('Narindera Jati P', 'NIM: 123230153', Colors.red),
         ],
       ),
     );

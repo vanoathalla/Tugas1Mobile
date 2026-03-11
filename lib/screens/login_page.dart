@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'dashboard_page.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -10,35 +11,30 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscurePassword = true;
+  bool _obscurePassword = true; // Buat fitur hide/show password temen lu
 
-  void _login() {
-    // Validasi super simpel nih Mon, asalkan diisi "admin" dua-duanye bisa masuk
-    if (_usernameController.text == 'admin' &&
-        _passwordController.text == 'admin') {
-      // Pindah ke halaman dashboard dan hapus history login biar ga bisa di-back
-      Navigator.pushReplacementNamed(context, '/dashboard');
+  // Jangan lupa dispose controller buat optimalisasi memori
+  @override
+  void dispose() {
+    _usernameController.dispose();
+    _passwordController.dispose();
+    super.dispose();
+  }
+
+  // Logic tetep pakai gaya aslab
+  void _login({required String username, required String password}) {
+    if (username == 'admin' && password == 'admin') {
+      // Navigasi menggunakan MaterialPageRoute sesuai modul 4
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => const DashboardPage()),
+      );
     } else {
-      // Alert dialog yang cakep
-      showDialog(
-        context: context,
-        builder: (context) => AlertDialog(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
-          ),
-          title: const Text('Login Gagal!'),
-          content: const Text(
-            'Username atau Password salah ye! Coba pake "admin"',
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: const Text(
-                'Siap!',
-                style: TextStyle(color: Colors.orange),
-              ),
-            ),
-          ],
+      // Notifikasi gagal menggunakan SnackBar warna merah sesuai aslab
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(
+          backgroundColor: Colors.red,
+          content: Text("Login gagal! Username atau Password salah ye!"),
         ),
       );
     }
@@ -46,27 +42,24 @@ class _LoginPageState extends State<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
-    // Kite pake layout responsif
-    final screenWidth = MediaQuery.of(context).size.width;
-
     return Scaffold(
-      backgroundColor: Colors.blueGrey[50],
+      backgroundColor: Colors.blueGrey[50], // Warna background dari temen lu
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30.0),
           child: ConstrainedBox(
             constraints: const BoxConstraints(
-              maxWidth: 400,
-            ), // Biar ga kegedean di tablet
+              maxWidth: 400, // Biar ga kegedean di tablet
+            ),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Ilustrasi logo yang kalcer (pake icon aje biar simpel kodingan)
+                // Ilustrasi logo yang kalcer dari kodingan temen lu
                 Icon(
                   Icons.dashboard_customize_outlined,
                   size: 100,
-                  color: Colors.blueGrey[800],
+                  color: Colors.blueGrey,
                 ),
                 const SizedBox(height: 10),
                 const Text(
@@ -85,47 +78,58 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 50),
 
-                // Input username
-                TextField(
-                  controller: _usernameController,
-                  decoration: const InputDecoration(
-                    labelText: 'Username',
-                    prefixIcon: Icon(Icons.person_outline),
-                  ),
+                // Menggunakan helper widget ala aslab, tapi diinjeksi UI temen lu
+                _loginField(
+                  label: "Username",
+                  icon: Icons.person_outline,
+                  inputController: _usernameController,
                 ),
                 const SizedBox(height: 16),
 
-                // Input password
-                TextField(
-                  controller: _passwordController,
-                  obscureText:
-                      _obscurePassword, // Biar passwordnye jadi bintang-bintang
-                  decoration: InputDecoration(
-                    labelText: 'Password',
-                    prefixIcon: Icon(Icons.lock_outline),
-                    suffixIcon: IconButton(
-                      icon: Icon(
-                        _obscurePassword
-                            ? Icons.visibility_off_outlined
-                            : Icons.visibility_outlined,
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _obscurePassword = !_obscurePassword;
-                        });
-                      },
+                // Password pakai helper, ditambahin icon toggle mata
+                _loginField(
+                  label: "Password",
+                  icon: Icons.lock_outline,
+                  inputController: _passwordController,
+                  isPassword: _obscurePassword,
+                  suffixIcon: IconButton(
+                    icon: Icon(
+                      _obscurePassword
+                          ? Icons.visibility_off_outlined
+                          : Icons.visibility_outlined,
+                      color: Colors.blueGrey,
                     ),
+                    onPressed: () {
+                      setState(() {
+                        _obscurePassword = !_obscurePassword;
+                      });
+                    },
                   ),
                 ),
+
                 const SizedBox(height: 32),
 
-                // Tombol Log in
+                // Tombol Log in dengan style temen lu
                 ElevatedButton(
-                  onPressed: _login,
+                  onPressed: () {
+                    _login(
+                      username: _usernameController.text,
+                      password: _passwordController.text,
+                    );
+                  },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey[900], // Sesuai tema modern
+                    backgroundColor: Colors.blueGrey,
+                    foregroundColor: Colors.white,
+                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15),
+                    ),
+                    elevation: 2,
                   ),
-                  child: const Text('Log In', style: TextStyle(fontSize: 18)),
+                  child: const Text(
+                    'Log In',
+                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                  ),
                 ),
                 const SizedBox(height: 16),
                 const Text(
@@ -139,6 +143,36 @@ class _LoginPageState extends State<LoginPage> {
               ],
             ),
           ),
+        ),
+      ),
+    );
+  }
+
+  // Fungsi helper untuk Textfield biar struktur logicnya sama persis kodingan aslab
+  // Semua dekorasi warna dan border dari temen lu digeser ke sini
+  Widget _loginField({
+    required String label,
+    required IconData icon,
+    required TextEditingController inputController,
+    bool isPassword = false,
+    Widget? suffixIcon,
+  }) {
+    return TextField(
+      controller: inputController,
+      obscureText: isPassword,
+      decoration: InputDecoration(
+        labelText: label,
+        prefixIcon: Icon(icon, color: Colors.blueGrey),
+        suffixIcon: suffixIcon,
+        filled: true,
+        fillColor: const Color(0xFFECEFF1),
+        border: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: BorderSide.none,
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(15),
+          borderSide: const BorderSide(color: Colors.blueGrey, width: 2),
         ),
       ),
     );
