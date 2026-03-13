@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../controllers/jumlah_field_controller.dart'; // Import controllernya
 
 class JumlahFieldPage extends StatefulWidget {
   const JumlahFieldPage({super.key});
@@ -11,7 +12,9 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
   final TextEditingController _inputController = TextEditingController();
   String _hasil = '0';
 
-  // OPTIMASI 1: Membersihkan controller dari memori pas halaman ditutup
+  // Inisialisasi Controller
+  final JumlahFieldController _controller = JumlahFieldController();
+
   @override
   void dispose() {
     _inputController.dispose();
@@ -19,22 +22,11 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
   }
 
   void _hitungTotal() {
-    // Pisahin string input berdasarkan koma atau spasi
-    List<String> angkaString = _inputController.text.split(RegExp(r'[,\s]+'));
-
-    // GANTI JADI INT: Khusus bilangan bulat sesuai request
-    int total = 0;
-
-    for (var str in angkaString) {
-      if (str.isNotEmpty) {
-        // GANTI JADI INT: Parsing string jadi integer
-        total += int.tryParse(str) ?? 0;
-      }
-    }
+    // View cuma ngelempar teks ke Controller dan nangkep hasil jadinya
+    String hasilHitung = _controller.hitungTotal(_inputController.text);
 
     setState(() {
-      // Logic jadi super simpel, tinggal di-toString() aja karena pasti bulat
-      _hasil = total.toString();
+      _hasil = hasilHitung;
     });
   }
 
@@ -46,26 +38,22 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
         padding: const EdgeInsets.all(20.0),
         child: Column(
           children: [
-            // TextField tetap menggunakan bentuk asli, cuma ditambah maxLines biar lega
             TextField(
               controller: _inputController,
-              keyboardType:
-                  TextInputType.number, // Udah diset khusus keyboard angka
-              maxLines: 3,
+              keyboardType: TextInputType.number, 
+              maxLines: 3, 
               decoration: const InputDecoration(
                 labelText: 'Masukin deret angka (pisahin pake spasi/koma)',
                 prefixIcon: Icon(Icons.add_task_outlined),
-                border: OutlineInputBorder(), // Standarisasi border ala aslab
+                border: OutlineInputBorder(), 
               ),
             ),
             const SizedBox(height: 24),
-
-            // Tombol Hitung
             ElevatedButton(
               onPressed: _hitungTotal,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 55),
-                backgroundColor: Colors.blueGrey, // Samain warna tombol
+                backgroundColor: Colors.blueGrey[900], 
                 foregroundColor: Colors.white,
               ),
               child: const Text(
@@ -75,7 +63,7 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
             ),
             const SizedBox(height: 40),
 
-            // Card Hasil yang modern (TIDAK DIUBAH SAMA SEKALI)
+            // Card Hasil (Nggak ada yang diubah)
             Container(
               padding: const EdgeInsets.all(30),
               width: double.infinity,

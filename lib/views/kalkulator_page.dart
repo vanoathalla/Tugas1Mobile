@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../controllers/kalkulator_controller.dart'; // Import controllernya
 
 class KalkulatorPage extends StatefulWidget {
   const KalkulatorPage({super.key});
@@ -12,19 +13,27 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
   final TextEditingController _angka2Controller = TextEditingController();
   String _hasil = '0';
 
-  void _hitung(String operasi) {
-    double angka1 = double.tryParse(_angka1Controller.text) ?? 0;
-    double angka2 = double.tryParse(_angka2Controller.text) ?? 0;
-    double hasilHitung = 0;
+  // Inisialisasi Controller di dalam View
+  final KalkulatorController _controller = KalkulatorController();
 
-    if (operasi == '+') {
-      hasilHitung = angka1 + angka2;
-    } else if (operasi == '-') {
-      hasilHitung = angka1 - angka2;
-    }
+  // Pastikan controller UI dibersihkan
+  @override
+  void dispose() {
+    _angka1Controller.dispose();
+    _angka2Controller.dispose();
+    super.dispose();
+  }
+
+  void _hitung(String operasi) {
+    // View hanya melempar teks ke Controller, dan menerima hasilnya
+    String hasilAkhir = _controller.hitung(
+      _angka1Controller.text,
+      _angka2Controller.text,
+      operasi,
+    );
 
     setState(() {
-      _hasil = hasilHitung.toString();
+      _hasil = hasilAkhir;
     });
   }
 
@@ -45,14 +54,19 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
                 ),
                 const SizedBox(height: 20),
 
+                // Menggunakan helper widget TextField
                 _inputField(
                   hint: "Angka Pertama",
                   controller: _angka1Controller,
                 ),
                 const SizedBox(height: 10),
-                _inputField(hint: "Angka Kedua", controller: _angka2Controller),
+                _inputField(
+                  hint: "Angka Kedua",
+                  controller: _angka2Controller,
+                ),
                 const SizedBox(height: 20),
 
+                // Tombol operasi
                 Row(
                   children: [
                     Expanded(
@@ -72,14 +86,15 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
                 ),
                 const SizedBox(height: 40),
 
-                const Text('Hasil Akhir:', style: TextStyle(fontSize: 16)),
+                // Tampilan hasil
+                const Text(
+                  'Hasil Akhir:',
+                  style: TextStyle(fontSize: 16),
+                ),
                 const SizedBox(height: 8),
                 Text(
                   _hasil,
-                  style: const TextStyle(
-                    fontSize: 40,
-                    fontWeight: FontWeight.bold,
-                  ),
+                  style: const TextStyle(fontSize: 40, fontWeight: FontWeight.bold),
                   textAlign: TextAlign.center,
                 ),
               ],
@@ -97,10 +112,10 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
-      maxLength: 15, //batasan digit karena make double
+      maxLength: 15,
       decoration: InputDecoration(
         hintText: hint,
-        //counterText: "", // Menyembunyikan tulisan "0/15" di pojok bawah form
+        counterText: "", 
         border: const OutlineInputBorder(),
       ),
     );

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dart:async';
+import '../controllers/stopwatch_controller.dart'; // Import controllernya
 
 class StopwatchPage extends StatefulWidget {
   const StopwatchPage({super.key});
@@ -9,38 +10,32 @@ class StopwatchPage extends StatefulWidget {
 }
 
 class _StopwatchPageState extends State<StopwatchPage> {
-  Stopwatch _stopwatch = Stopwatch();
+  // Inisialisasi Controller
+  final StopwatchController _controller = StopwatchController();
   Timer? _timer;
 
   void _startTimer() {
     _timer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
-      setState(() {});
+      if (mounted) {
+        setState(() {}); // Refresh UI
+      }
     });
-    _stopwatch.start();
+    // Perintah start dilempar ke Controller
+    _controller.start();
   }
 
   void _stopTimer() {
     _timer?.cancel();
-    _stopwatch.stop();
+    // Perintah stop dilempar ke Controller
+    _controller.stop();
     setState(() {});
   }
 
   void _resetTimer() {
     _stopTimer();
-    _stopwatch.reset();
+    // Perintah reset dilempar ke Controller
+    _controller.reset();
     setState(() {});
-  }
-
-  String _formatWaktu(int milliseconds) {
-    int ratusan = (milliseconds / 10).truncate() % 100;
-    int detik = (milliseconds / 1000).truncate() % 60;
-    int menit = (milliseconds / (1000 * 60)).truncate() % 60;
-
-    String menitStr = menit.toString().padLeft(2, '0');
-    String detikStr = detik.toString().padLeft(2, '0');
-    String ratusanStr = ratusan.toString().padLeft(2, '0');
-
-    return "$menitStr:$detikStr:$ratusanStr";
   }
 
   @override
@@ -58,9 +53,9 @@ class _StopwatchPageState extends State<StopwatchPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            // Tampilan Waktu yang modern (const ditiadakan karna warna pake shade array)
+            // View minta tolong Controller buat nge-format angkanya
             Text(
-              _formatWaktu(_stopwatch.elapsedMilliseconds),
+              _controller.formatWaktu(_controller.elapsedMilliseconds),
               style: TextStyle(
                 fontSize: 72,
                 fontWeight: FontWeight.bold,
@@ -77,14 +72,14 @@ class _StopwatchPageState extends State<StopwatchPage> {
                   'Start',
                   Icons.play_arrow_outlined,
                   Colors.teal,
-                  _stopwatch.isRunning ? null : _startTimer,
+                  _controller.isRunning ? null : _startTimer,
                 ),
                 const SizedBox(width: 20),
                 _buildActionButton(
                   'Stop',
                   Icons.stop_outlined,
                   Colors.orange,
-                  _stopwatch.isRunning ? _stopTimer : null,
+                  _controller.isRunning ? _stopTimer : null,
                 ),
                 const SizedBox(width: 20),
                 _buildActionButton(
@@ -101,6 +96,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
     );
   }
 
+  // Fungsi helper tombol (TIDAK DIUBAH SAMA SEKALI)
   Widget _buildActionButton(
     String label,
     IconData icon,

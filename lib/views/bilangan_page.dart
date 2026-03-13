@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../controllers/bilangan_controller.dart'; // Import controllernya
 
 class BilanganPage extends StatefulWidget {
   const BilanganPage({super.key});
@@ -12,7 +13,9 @@ class _BilanganPageState extends State<BilanganPage> {
   String _hasilGanjilGenap = '';
   String _hasilPrima = '';
 
-  // OPTIMASI 2: Wajib ada dispose untuk membersihkan memori controller
+  // Inisialisasi Controller
+  final BilanganController _controller = BilanganController();
+
   @override
   void dispose() {
     _angkaController.dispose();
@@ -20,42 +23,13 @@ class _BilanganPageState extends State<BilanganPage> {
   }
 
   void _cekBilangan() {
-    int? angka = int.tryParse(_angkaController.text);
-    if (angka == null) {
-      setState(() {
-        _hasilGanjilGenap = 'Masukin angka yang bener ye!';
-        _hasilPrima = '';
-      });
-      return;
-    }
-
-    // Cek Ganjil Genap
-    String ganjilGenap = (angka % 2 == 0) ? 'Genap' : 'Ganjil';
-
-    // Cek Prima (OPTIMASI 1: Algoritma lebih cepat dan efisien)
-    bool isPrima = true;
-    if (angka <= 1) {
-      isPrima = false; // 0, 1, dan minus bukan bilangan prima
-    } else if (angka == 2) {
-      isPrima = true; // 2 adalah prima
-    } else if (angka % 2 == 0) {
-      isPrima = false; // Semua genap selain 2 pasti bukan prima
-    } else {
-      // Looping hanya untuk bilangan ganjil sampai akar kuadratnya (i * i <= angka)
-      // Ini jauh lebih cepat dari pada 'angka / 2'
-      for (int i = 3; i * i <= angka; i += 2) {
-        if (angka % i == 0) {
-          isPrima = false;
-          break;
-        }
-      }
-    }
-
-    String prima = isPrima ? 'Prima' : 'Bukan Prima';
+    // View cukup melempar inputan ke Controller
+    final hasil = _controller.cekBilangan(_angkaController.text);
 
     setState(() {
-      _hasilGanjilGenap = 'Angka $angka adalah $ganjilGenap';
-      _hasilPrima = 'Dan $prima';
+      // Menangkap hasil kembalian dari map Controller
+      _hasilGanjilGenap = hasil['ganjilGenap']!;
+      _hasilPrima = hasil['prima']!;
     });
   }
 
@@ -70,12 +44,11 @@ class _BilanganPageState extends State<BilanganPage> {
             TextField(
               controller: _angkaController,
               keyboardType: TextInputType.number,
-              // OPTIMASI 3: Batasin digit maksimal int 64-bit biar ga error
-              maxLength: 18,
+              maxLength: 18, 
               decoration: const InputDecoration(
-                labelText: 'Masukkan Angka Bulat',
+                labelText: 'Masukin Angka Bulat',
                 prefixIcon: Icon(Icons.numbers_outlined),
-                // counterText: "", // Sembunyiin teks counter di bawah textfield
+                counterText: "", 
               ),
             ),
             const SizedBox(height: 24),
@@ -83,15 +56,14 @@ class _BilanganPageState extends State<BilanganPage> {
               onPressed: _cekBilangan,
               style: ElevatedButton.styleFrom(
                 minimumSize: const Size(double.infinity, 55),
-                backgroundColor: Colors
-                    .blueGrey, // Gua tambahin warna biar buttonnya ga polosan abu-abu
+                backgroundColor: Colors.blueGrey[900], 
                 foregroundColor: Colors.white,
               ),
               child: const Text('Cek Sekarang', style: TextStyle(fontSize: 18)),
             ),
             const SizedBox(height: 40),
 
-            // Tampilan Hasil Modern (TIDAK DIUBAH SAMA SEKALI)
+            // Tampilan Hasil (Nggak ada yang diubah)
             _buildResultCard(context),
           ],
         ),

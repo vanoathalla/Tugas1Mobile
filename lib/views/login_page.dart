@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dashboard_page.dart';
+import '../controllers/login_controller.dart'; // Import controllernya
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -11,9 +12,11 @@ class LoginPage extends StatefulWidget {
 class _LoginPageState extends State<LoginPage> {
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  bool _obscurePassword = true; // Buat fitur hide/show password temen lu
+  bool _obscurePassword = true;
 
-  // Jangan lupa dispose controller buat optimalisasi memori
+  // Inisialisasi Controller
+  final LoginController _controller = LoginController();
+
   @override
   void dispose() {
     _usernameController.dispose();
@@ -21,16 +24,18 @@ class _LoginPageState extends State<LoginPage> {
     super.dispose();
   }
 
-  // Logic tetep pakai gaya aslab
   void _login({required String username, required String password}) {
-    if (username == 'admin' && password == 'admin') {
-      // Navigasi menggunakan MaterialPageRoute sesuai modul 4
+    // View bertanya ke Controller apakah loginnya valid
+    bool isLoginValid = _controller.validasiLogin(username, password);
+
+    if (isLoginValid) {
+      // Jika true, View bertugas melakukan navigasi
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const DashboardPage()),
       );
     } else {
-      // Notifikasi gagal menggunakan SnackBar warna merah sesuai aslab
+      // Jika false, View bertugas menampilkan notifikasi gagal
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
           backgroundColor: Colors.red,
@@ -43,23 +48,20 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[50], // Warna background dari temen lu
+      backgroundColor: Colors.blueGrey[50],
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30.0),
           child: ConstrainedBox(
-            constraints: const BoxConstraints(
-              maxWidth: 400, // Biar ga kegedean di tablet
-            ),
+            constraints: const BoxConstraints(maxWidth: 400),
             child: Column(
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                // Ilustrasi logo yang kalcer dari kodingan temen lu
                 Icon(
                   Icons.dashboard_customize_outlined,
                   size: 100,
-                  color: Colors.blueGrey,
+                  color: Colors.blueGrey[800],
                 ),
                 const SizedBox(height: 10),
                 const Text(
@@ -78,7 +80,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 50),
 
-                // Menggunakan helper widget ala aslab, tapi diinjeksi UI temen lu
+                // Helper widget untuk input username
                 _loginField(
                   label: "Username",
                   icon: Icons.person_outline,
@@ -86,7 +88,7 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Password pakai helper, ditambahin icon toggle mata
+                // Helper widget untuk input password
                 _loginField(
                   label: "Password",
                   icon: Icons.lock_outline,
@@ -109,7 +111,6 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 32),
 
-                // Tombol Log in dengan style temen lu
                 ElevatedButton(
                   onPressed: () {
                     _login(
@@ -118,7 +119,7 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey,
+                    backgroundColor: Colors.blueGrey[900],
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 15),
                     shape: RoundedRectangleBorder(
@@ -148,8 +149,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Fungsi helper untuk Textfield biar struktur logicnya sama persis kodingan aslab
-  // Semua dekorasi warna dan border dari temen lu digeser ke sini
+  // Fungsi helper untuk Textfield (TIDAK DIUBAH SAMA SEKALI)
   Widget _loginField({
     required String label,
     required IconData icon,

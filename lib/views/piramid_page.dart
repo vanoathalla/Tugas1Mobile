@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import 'dart:math'; // Biar bisa pake sqrt (akar) buat ngitung luas
+import '../controllers/piramid_controller.dart'; // Import controllernya
 
 class PiramidPage extends StatefulWidget {
   const PiramidPage({super.key});
@@ -14,7 +14,9 @@ class _PiramidPageState extends State<PiramidPage> {
   String _hasilVolume = '0.00';
   String _hasilLuas = '0.00';
 
-  // OPTIMASI 1: Wajib ada dispose untuk membersihkan memori controller
+  // Inisialisasi Controller
+  final PiramidController _controller = PiramidController();
+
   @override
   void dispose() {
     _sisiController.dispose();
@@ -23,20 +25,16 @@ class _PiramidPageState extends State<PiramidPage> {
   }
 
   void _hitungPiramid() {
-    double sisi = double.tryParse(_sisiController.text) ?? 0;
-    double tinggi = double.tryParse(_tinggiController.text) ?? 0;
-
-    // Hitung Volume (1/3 * Luas Alas * Tinggi)
-    double volume = (1 / 3) * (sisi * sisi) * tinggi;
-
-    // Hitung Luas Permukaan (Luas Alas + 4 * Luas Segitiga Tegak)
-    // Kite perlu hitung tinggi segitiga tegak pake pythagoras
-    double tinggiMiring = sqrt(pow((sisi / 2), 2) + pow(tinggi, 2));
-    double luasPermukaan = (sisi * sisi) + (4 * (0.5 * sisi * tinggiMiring));
+    // Lempar inputan ke Controller
+    final hasil = _controller.hitungPiramid(
+      _sisiController.text,
+      _tinggiController.text,
+    );
 
     setState(() {
-      _hasilVolume = volume.toStringAsFixed(2);
-      _hasilLuas = luasPermukaan.toStringAsFixed(2);
+      // Tangkap hasil dari Map
+      _hasilVolume = hasil['volume']!;
+      _hasilLuas = hasil['luas']!;
     });
   }
 
@@ -52,24 +50,22 @@ class _PiramidPageState extends State<PiramidPage> {
             TextField(
               controller: _sisiController,
               keyboardType: TextInputType.number,
-              maxLength:
-                  15, // OPTIMASI 2: Batasan presisi maksimal tipe data double
+              maxLength: 15, 
               decoration: const InputDecoration(
                 labelText: 'Panjang Sisi Alas (a)',
                 prefixIcon: Icon(Icons.line_weight_outlined),
-                //counterText: "", // Sembunyiin teks counter
+                counterText: "", 
               ),
             ),
             const SizedBox(height: 16),
             TextField(
               controller: _tinggiController,
               keyboardType: TextInputType.number,
-              maxLength:
-                  15, // OPTIMASI 2: Batasan presisi maksimal tipe data double
+              maxLength: 15, 
               decoration: const InputDecoration(
                 labelText: 'Tinggi Piramida (h)',
                 prefixIcon: Icon(Icons.height_outlined),
-                //counterText: "", // Sembunyiin teks counter
+                counterText: "", 
               ),
             ),
             const SizedBox(height: 32),
@@ -78,9 +74,8 @@ class _PiramidPageState extends State<PiramidPage> {
             ElevatedButton(
               onPressed: _hitungPiramid,
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueGrey,
-                foregroundColor: Colors
-                    .white, // OPTIMASI 3: Biar teks ga nyaru sama tombol gelap
+                backgroundColor: Colors.blueGrey[900],
+                foregroundColor: Colors.white, 
                 minimumSize: const Size(double.infinity, 55),
               ),
               child: const Text(
