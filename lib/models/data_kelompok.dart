@@ -22,12 +22,12 @@ List<AnggotaKelompok> dataKelompok = [
     imagePath: 'assets/images/gorga.jpeg',
   ),
   AnggotaKelompok(
-    nama: 'R. Revano Athalla K', 
+    nama: 'Raden Revano Athalla Kartika', 
     nim: 'NIM: 123230150', 
     imagePath: 'assets/images/vano.jpeg',
   ),
   AnggotaKelompok(
-    nama: 'Narindera Jati P', 
+    nama: 'Narindera Jati Panuntun', 
     nim: 'NIM: 123230153', 
     imagePath: 'assets/images/jepe.jpeg',
   ),
