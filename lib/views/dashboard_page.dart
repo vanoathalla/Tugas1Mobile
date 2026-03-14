@@ -25,7 +25,6 @@ class DashboardPage extends StatelessWidget {
             fontSize: 22,
           ),
         ),
-        // Tombol Logout dipindah ke AppBar sini bre
         actions: [
           IconButton(
             icon: const Icon(Icons.logout_outlined, color: Colors.redAccent),
@@ -37,7 +36,7 @@ class DashboardPage extends StatelessWidget {
               );
             },
           ),
-          const SizedBox(width: 8), // Kasih jarak dikit di pojok kanan
+          const SizedBox(width: 8),
         ],
       ),
       body: ListView(
@@ -90,7 +89,6 @@ class DashboardPage extends StatelessWidget {
     );
   }
 
-  // Fungsi helper UI Minimalist
   Widget _buildMinimalistTile(
     BuildContext context,
     String title,

@@ -13,7 +13,6 @@ class _BilanganPageState extends State<BilanganPage> {
   String _hasilGanjilGenap = '-';
   String _hasilPrima = '-';
 
-  // Inisialisasi Controller
   final BilanganController _controller = BilanganController();
 
   @override
@@ -22,7 +21,26 @@ class _BilanganPageState extends State<BilanganPage> {
     super.dispose();
   }
 
+  void _showError(String pesan) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.black87,
+        content: Text(pesan, style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
   void _cekBilangan() {
+    if (_angkaController.text.isEmpty) {
+      _showError("Kolom angkanya jangan dikosongin ye.");
+      return;
+    }
+    if (int.tryParse(_angkaController.text) == null) {
+      _showError("Inputan ngawur! Harus masukin angka bulat yang bener.");
+      return;
+    }
+
     final hasil = _controller.cekBilangan(_angkaController.text);
 
     setState(() {
@@ -34,13 +52,11 @@ class _BilanganPageState extends State<BilanganPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background putih bersih
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ), // Tombol back hitam
+        iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Cek Bilangan',
           style: TextStyle(
@@ -57,15 +73,11 @@ class _BilanganPageState extends State<BilanganPage> {
           children: [
             const Icon(Icons.numbers_outlined, size: 64, color: Colors.black87),
             const SizedBox(height: 24),
-
-            // Input field minimalis
             _inputField(
               hint: 'Masukkan Angka Bulat',
               controller: _angkaController,
             ),
             const SizedBox(height: 24),
-
-            // Tombol style monochrome
             ElevatedButton(
               onPressed: _cekBilangan,
               style: _buttonStyle(),
@@ -79,8 +91,6 @@ class _BilanganPageState extends State<BilanganPage> {
               ),
             ),
             const SizedBox(height: 48),
-
-            // Tampilan Hasil yang Clean & Elegan (Dimodifikasi sesuai request)
             _buildResultCard(),
           ],
         ),
@@ -94,13 +104,10 @@ class _BilanganPageState extends State<BilanganPage> {
       decoration: BoxDecoration(
         color: Colors.grey.shade50,
         borderRadius: BorderRadius.circular(12),
-        border: Border.all(
-          color: Colors.grey.shade200,
-          width: 1.5,
-        ), // Hanya pakai garis tepi tipis
+        border: Border.all(color: Colors.grey.shade200, width: 1.5),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center, // Rata tengah
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'HASIL ANALISA',
@@ -112,10 +119,9 @@ class _BilanganPageState extends State<BilanganPage> {
             ),
           ),
           const SizedBox(height: 24),
-          // Hapus icon dan tampilkan teks rata tengah
           Text(
             _hasilGanjilGenap,
-            textAlign: TextAlign.center, // Rata tengah
+            textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -125,7 +131,7 @@ class _BilanganPageState extends State<BilanganPage> {
           const Divider(height: 32, color: Colors.black12),
           Text(
             _hasilPrima,
-            textAlign: TextAlign.center, // Rata tengah
+            textAlign: TextAlign.center,
             style: const TextStyle(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -137,9 +143,6 @@ class _BilanganPageState extends State<BilanganPage> {
     );
   }
 
-  // Fungsi helper _buildHasilItem() dihapus karena tidak digunakan lagi.
-
-  // Helper untuk TextField bergaya Monochrome
   Widget _inputField({
     required String hint,
     required TextEditingController controller,
@@ -169,7 +172,6 @@ class _BilanganPageState extends State<BilanganPage> {
     );
   }
 
-  // Helper untuk style button bergaya Monochrome
   ButtonStyle _buttonStyle() {
     return ElevatedButton.styleFrom(
       backgroundColor: Colors.black,

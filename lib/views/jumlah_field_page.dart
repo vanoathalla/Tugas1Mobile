@@ -12,7 +12,6 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
   final TextEditingController _inputController = TextEditingController();
   String _hasil = '0';
 
-  // Inisialisasi Controller
   final JumlahFieldController _controller = JumlahFieldController();
 
   @override
@@ -21,7 +20,26 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
     super.dispose();
   }
 
+  void _showError(String pesan) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.black87,
+        content: Text(pesan, style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
   void _hitungTotal() {
+    if (_inputController.text.trim().isEmpty) {
+      _showError("Deret angkanya jangan dikosongin ye.");
+      return;
+    }
+    if (RegExp(r'[a-zA-Z]').hasMatch(_inputController.text)) {
+      _showError("Inputan ngawur! Jangan masukin huruf, pake angka aje.");
+      return;
+    }
+
     String hasilHitung = _controller.hitungTotal(_inputController.text);
 
     setState(() {
@@ -32,13 +50,11 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background putih bersih
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ), // Tombol back hitam
+        iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Jumlah Total Field',
           style: TextStyle(
@@ -55,15 +71,11 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
           children: [
             const Icon(Icons.add_box_outlined, size: 64, color: Colors.black87),
             const SizedBox(height: 24),
-
-            // Input field minimalis
             _inputField(
               hint: 'Masukin deret angka (pisahin spasi/koma)',
               controller: _inputController,
             ),
             const SizedBox(height: 24),
-
-            // Tombol style monochrome
             ElevatedButton(
               onPressed: _hitungTotal,
               style: _buttonStyle(),
@@ -77,8 +89,6 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
               ),
             ),
             const SizedBox(height: 48),
-
-            // Tampilan Hasil yang Clean & Elegan
             Container(
               padding: const EdgeInsets.all(32),
               decoration: BoxDecoration(
@@ -87,7 +97,7 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
                 border: Border.all(color: Colors.grey.shade200, width: 1.5),
               ),
               child: Column(
-                crossAxisAlignment: CrossAxisAlignment.center, // Rata tengah
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     'TOTAL JUMLAH',
@@ -118,7 +128,6 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
     );
   }
 
-  // Helper untuk TextField bergaya Monochrome
   Widget _inputField({
     required String hint,
     required TextEditingController controller,
@@ -147,7 +156,6 @@ class _JumlahFieldPageState extends State<JumlahFieldPage> {
     );
   }
 
-  // Helper untuk style button bergaya Monochrome
   ButtonStyle _buttonStyle() {
     return ElevatedButton.styleFrom(
       backgroundColor: Colors.black,

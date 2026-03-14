@@ -22,10 +22,8 @@ class TugasMobileApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Tugas Mobile Kalcer',
-      // Style dibikin polosan ngikutin default Flutter (gaya aslab)
+      title: 'Tugas Mobile 1',
       theme: ThemeData(colorScheme: const ColorScheme.light()),
-      // Navigasi awal langsung tembak ke LoginPage
       home: const LoginPage(),
     );
   }

@@ -1,8 +1,6 @@
 class StopwatchController {
-  // Mesin utamanya kita pindah ke Controller
   final Stopwatch _stopwatch = Stopwatch();
 
-  // Getter untuk mempermudah View mengambil status dari mesin
   bool get isRunning => _stopwatch.isRunning;
   int get elapsedMilliseconds => _stopwatch.elapsedMilliseconds;
 
@@ -10,7 +8,6 @@ class StopwatchController {
   void stop() => _stopwatch.stop();
   void reset() => _stopwatch.reset();
 
-  // Logika matematika untuk mengubah milidetik jadi format MM:SS:MS
   String formatWaktu(int milliseconds) {
     int ratusan = (milliseconds / 10).truncate() % 100;
     int detik = (milliseconds / 1000).truncate() % 60;

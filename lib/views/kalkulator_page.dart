@@ -13,7 +13,6 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
   final TextEditingController _angka2Controller = TextEditingController();
   String _hasil = '0';
 
-  // Inisialisasi Controller
   final KalkulatorController _controller = KalkulatorController();
 
   @override
@@ -23,7 +22,27 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
     super.dispose();
   }
 
+  void _showError(String pesan) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.black87,
+        content: Text(pesan, style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
   void _hitung(String operasi) {
+    if (_angka1Controller.text.isEmpty || _angka2Controller.text.isEmpty) {
+      _showError("Kolom angkanya jangan dikosongin ye.");
+      return;
+    }
+    if (double.tryParse(_angka1Controller.text) == null ||
+        double.tryParse(_angka2Controller.text) == null) {
+      _showError("Inputan ngawur! Masukin angka yang bener.");
+      return;
+    }
+
     String hasilAkhir = _controller.hitung(
       _angka1Controller.text,
       _angka2Controller.text,
@@ -38,13 +57,11 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background putih bersih
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ), // Tombol back jadi hitam
+        iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Kalkulator +/-',
           style: TextStyle(
@@ -68,8 +85,6 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
                   color: Colors.black87,
                 ),
                 const SizedBox(height: 24),
-
-                // Input Fields minimalis
                 _inputField(
                   hint: "Masukkan Angka Pertama",
                   controller: _angka1Controller,
@@ -80,8 +95,6 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
                   controller: _angka2Controller,
                 ),
                 const SizedBox(height: 32),
-
-                // Tombol operasi monochrome
                 Row(
                   children: [
                     Expanded(
@@ -114,8 +127,6 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
                   ],
                 ),
                 const SizedBox(height: 48),
-
-                // Tampilan hasil yang clean
                 Container(
                   padding: const EdgeInsets.symmetric(
                     vertical: 24,
@@ -159,7 +170,6 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
     );
   }
 
-  // Helper untuk TextField bergaya Monochrome
   Widget _inputField({
     required String hint,
     required TextEditingController controller,
@@ -189,7 +199,6 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
     );
   }
 
-  // Helper untuk style button bergaya Monochrome
   ButtonStyle _buttonStyle() {
     return ElevatedButton.styleFrom(
       backgroundColor: Colors.black,

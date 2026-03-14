@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controllers/piramid_controller.dart'; 
+import '../controllers/piramid_controller.dart';
 
 class PiramidPage extends StatefulWidget {
   const PiramidPage({super.key});
@@ -14,7 +14,6 @@ class _PiramidPageState extends State<PiramidPage> {
   String _hasilVolume = '0.00';
   String _hasilLuas = '0.00';
 
-  // Inisialisasi Controller
   final PiramidController _controller = PiramidController();
 
   @override
@@ -24,7 +23,27 @@ class _PiramidPageState extends State<PiramidPage> {
     super.dispose();
   }
 
+  void _showError(String pesan) {
+    ScaffoldMessenger.of(context).clearSnackBars();
+    ScaffoldMessenger.of(context).showSnackBar(
+      SnackBar(
+        backgroundColor: Colors.black87,
+        content: Text(pesan, style: const TextStyle(color: Colors.white)),
+      ),
+    );
+  }
+
   void _hitungPiramid() {
+    if (_sisiController.text.isEmpty || _tinggiController.text.isEmpty) {
+      _showError("Panjang sisi sama tinggi ga boleh kosong ye.");
+      return;
+    }
+    if (double.tryParse(_sisiController.text) == null ||
+        double.tryParse(_tinggiController.text) == null) {
+      _showError("Inputan ngawur! Masukin format angka yang bener pak.");
+      return;
+    }
+
     final hasil = _controller.hitungPiramid(
       _sisiController.text,
       _tinggiController.text,
@@ -39,14 +58,18 @@ class _PiramidPageState extends State<PiramidPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background putih bersih
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(color: Colors.black), // Tombol back hitam
+        iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Luas & Volume Piramid',
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 20),
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
         ),
       ),
       body: SingleChildScrollView(
@@ -54,10 +77,12 @@ class _PiramidPageState extends State<PiramidPage> {
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            const Icon(Icons.change_history_outlined, size: 64, color: Colors.black87),
+            const Icon(
+              Icons.change_history_outlined,
+              size: 64,
+              color: Colors.black87,
+            ),
             const SizedBox(height: 24),
-
-            // Input Fields minimalis
             _inputField(
               hint: 'Panjang Sisi Alas (a)',
               controller: _sisiController,
@@ -68,16 +93,19 @@ class _PiramidPageState extends State<PiramidPage> {
               controller: _tinggiController,
             ),
             const SizedBox(height: 24),
-
-            // Tombol style monochrome
             ElevatedButton(
               onPressed: _hitungPiramid,
               style: _buttonStyle(),
-              child: const Text('Hitung Sekarang', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)),
+              child: const Text(
+                'Hitung Sekarang',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
+                ),
+              ),
             ),
             const SizedBox(height: 48),
-
-            // Tampilan Hasil Clean tanpa Icon
             _buildResultCard(),
           ],
         ),
@@ -94,7 +122,7 @@ class _PiramidPageState extends State<PiramidPage> {
         border: Border.all(color: Colors.grey.shade200, width: 1.5),
       ),
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center, // Teks rata tengah
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: [
           Text(
             'HASIL PERHITUNGAN',
@@ -106,47 +134,65 @@ class _PiramidPageState extends State<PiramidPage> {
             ),
           ),
           const SizedBox(height: 24),
-          
-          // Bagian Volume
           Text(
             'Volume (V)',
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             _hasilVolume,
-            style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: -1.0),
+            style: const TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.w900,
+              color: Colors.black,
+              letterSpacing: -1.0,
+            ),
           ),
-          
           const Divider(height: 32, color: Colors.black12),
-          
-          // Bagian Luas Permukaan
           Text(
             'Luas Permukaan (Lp)',
-            style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+            style: TextStyle(
+              fontSize: 14,
+              color: Colors.grey.shade600,
+              fontWeight: FontWeight.w600,
+            ),
           ),
           const SizedBox(height: 4),
           Text(
             _hasilLuas,
-            style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: -1.0),
+            style: const TextStyle(
+              fontSize: 36,
+              fontWeight: FontWeight.w900,
+              color: Colors.black,
+              letterSpacing: -1.0,
+            ),
           ),
         ],
       ),
     );
   }
 
-  // Helper untuk TextField bergaya Monochrome
-  Widget _inputField({required String hint, required TextEditingController controller}) {
+  Widget _inputField({
+    required String hint,
+    required TextEditingController controller,
+  }) {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
-      maxLength: 15, 
+      maxLength: 15,
       style: const TextStyle(color: Colors.black, fontSize: 18),
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
-        counterText: "", 
-        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        counterText: "",
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
           borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
@@ -159,16 +205,13 @@ class _PiramidPageState extends State<PiramidPage> {
     );
   }
 
-  // Helper untuk style button bergaya Monochrome
   ButtonStyle _buttonStyle() {
     return ElevatedButton.styleFrom(
       backgroundColor: Colors.black,
       foregroundColor: Colors.white,
       padding: const EdgeInsets.symmetric(vertical: 18),
       elevation: 0,
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(10),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 }

@@ -10,7 +10,6 @@ class StopwatchPage extends StatefulWidget {
 }
 
 class _StopwatchPageState extends State<StopwatchPage> {
-  // Inisialisasi Controller
   final StopwatchController _controller = StopwatchController();
   Timer? _timer;
 
@@ -44,13 +43,11 @@ class _StopwatchPageState extends State<StopwatchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background putih bersih
+      backgroundColor: Colors.white,
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
-        iconTheme: const IconThemeData(
-          color: Colors.black,
-        ), // Tombol back hitam
+        iconTheme: const IconThemeData(color: Colors.black),
         title: const Text(
           'Stopwatch',
           style: TextStyle(
@@ -69,7 +66,6 @@ class _StopwatchPageState extends State<StopwatchPage> {
             const Icon(Icons.timer_outlined, size: 64, color: Colors.black87),
             const SizedBox(height: 32),
 
-            // Tampilan Waktu (Digital Display Minimalis)
             Container(
               padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
               decoration: BoxDecoration(
@@ -83,8 +79,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
                 style: const TextStyle(
                   fontSize: 64,
                   fontWeight: FontWeight.w900,
-                  fontFamily:
-                      'monospace', // Font khusus angka biar lebarnya konsisten
+                  fontFamily: 'monospace',
                   color: Colors.black,
                   letterSpacing: -2.0,
                 ),
@@ -92,14 +87,13 @@ class _StopwatchPageState extends State<StopwatchPage> {
             ),
             const SizedBox(height: 48),
 
-            // Baris Tombol Start & Stop
             Row(
               children: [
                 Expanded(
                   child: _buildActionButton(
                     label: 'Start',
                     icon: Icons.play_arrow_outlined,
-                    isPrimary: true, // Warna hitam pekat
+                    isPrimary: true,
                     onPressed: _controller.isRunning ? null : _startTimer,
                   ),
                 ),
@@ -108,7 +102,7 @@ class _StopwatchPageState extends State<StopwatchPage> {
                   child: _buildActionButton(
                     label: 'Stop',
                     icon: Icons.pause_outlined,
-                    isPrimary: true, // Warna hitam pekat
+                    isPrimary: true,
                     onPressed: _controller.isRunning ? _stopTimer : null,
                   ),
                 ),
@@ -116,11 +110,10 @@ class _StopwatchPageState extends State<StopwatchPage> {
             ),
             const SizedBox(height: 16),
 
-            // Tombol Reset (Dibikin Full Width & Gaya Outline)
             _buildActionButton(
               label: 'Reset',
               icon: Icons.refresh_outlined,
-              isPrimary: false, // Warna putih garis abu-abu
+              isPrimary: false,
               onPressed: _resetTimer,
             ),
           ],
@@ -129,7 +122,6 @@ class _StopwatchPageState extends State<StopwatchPage> {
     );
   }
 
-  // Helper fungsi tombol biar kodingannya rapi
   Widget _buildActionButton({
     required String label,
     required IconData icon,
@@ -148,19 +140,16 @@ class _StopwatchPageState extends State<StopwatchPage> {
       ),
       onPressed: onPressed,
       style: ElevatedButton.styleFrom(
-        // Kalau isPrimary true (hitam), kalau false (putih)
         backgroundColor: isPrimary ? Colors.black : Colors.white,
         foregroundColor: isPrimary ? Colors.white : Colors.black,
 
-        // Warna kalau tombolnya lagi dimatiin (disabled)
         disabledBackgroundColor: Colors.grey.shade100,
         disabledForegroundColor: Colors.grey.shade400,
 
         padding: const EdgeInsets.symmetric(vertical: 18),
-        elevation: 0, // Tanpa bayangan
+        elevation: 0,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(10),
-          // Kasih border kalau dia secondary (Reset) dan lagi bisa dipencet
           side: isPrimary || onPressed == null
               ? BorderSide.none
               : BorderSide(color: Colors.grey.shade300, width: 1.5),

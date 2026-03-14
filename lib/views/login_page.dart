@@ -14,7 +14,6 @@ class _LoginPageState extends State<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   bool _obscurePassword = true;
 
-  // Inisialisasi Controller
   final LoginController _controller = LoginController();
 
   @override
@@ -35,7 +34,7 @@ class _LoginPageState extends State<LoginPage> {
     } else {
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Colors.black87, // Disesuaikan dengan tema monochrome
+          backgroundColor: Colors.black87,
           content: Text(
             "Login gagal! Username atau Password salah.",
             style: TextStyle(color: Colors.white),
@@ -48,7 +47,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white, // Background putih bersih
+      backgroundColor: Colors.white,
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30.0),
@@ -59,8 +58,7 @@ class _LoginPageState extends State<LoginPage> {
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
                 const Icon(
-                  Icons
-                      .lock_person_outlined, // Icon diganti biar lebih pas buat login
+                  Icons.lock_person_outlined,
                   size: 80,
                   color: Colors.black,
                 ),
@@ -83,7 +81,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 50),
 
-                // Helper widget untuk input username
                 _loginField(
                   label: "Username",
                   icon: Icons.person_outline,
@@ -91,7 +88,6 @@ class _LoginPageState extends State<LoginPage> {
                 ),
                 const SizedBox(height: 16),
 
-                // Helper widget untuk input password
                 _loginField(
                   label: "Password",
                   icon: Icons.lock_outline,
@@ -114,7 +110,6 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 32),
 
-                // Tombol Log in style minimalis
                 ElevatedButton(
                   onPressed: () {
                     _login(
@@ -123,14 +118,12 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.black, // Warna solid pekat
+                    backgroundColor: Colors.black,
                     foregroundColor: Colors.white,
                     padding: const EdgeInsets.symmetric(vertical: 18),
-                    elevation: 0, // Tanpa bayangan
+                    elevation: 0,
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(
-                        10,
-                      ), // Ujungnya nggak terlalu melengkung
+                      borderRadius: BorderRadius.circular(10),
                     ),
                   ),
                   child: const Text(
@@ -151,7 +144,6 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Fungsi helper UI Minimalist
   Widget _loginField({
     required String label,
     required IconData icon,
@@ -168,20 +160,14 @@ class _LoginPageState extends State<LoginPage> {
         labelStyle: TextStyle(color: Colors.grey.shade600),
         prefixIcon: Icon(icon, color: Colors.black87),
         suffixIcon: suffixIcon,
-        filled: false, // Background transparan
+        filled: false,
         enabledBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(
-            color: Colors.grey.shade300,
-            width: 1.5,
-          ), // Garis abu-abu tipis
+          borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
         ),
         focusedBorder: OutlineInputBorder(
           borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(
-            color: Colors.black,
-            width: 2,
-          ), // Garis hitam tebal pas diketik
+          borderSide: const BorderSide(color: Colors.black, width: 2),
         ),
       ),
     );
