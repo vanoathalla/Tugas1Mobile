@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controllers/bilangan_controller.dart'; // Import controllernya
+import '../controllers/bilangan_controller.dart';
 
 class BilanganPage extends StatefulWidget {
   const BilanganPage({super.key});
@@ -10,8 +10,8 @@ class BilanganPage extends StatefulWidget {
 
 class _BilanganPageState extends State<BilanganPage> {
   final TextEditingController _angkaController = TextEditingController();
-  String _hasilGanjilGenap = '';
-  String _hasilPrima = '';
+  String _hasilGanjilGenap = '-';
+  String _hasilPrima = '-';
 
   // Inisialisasi Controller
   final BilanganController _controller = BilanganController();
@@ -23,11 +23,9 @@ class _BilanganPageState extends State<BilanganPage> {
   }
 
   void _cekBilangan() {
-    // View cukup melempar inputan ke Controller
     final hasil = _controller.cekBilangan(_angkaController.text);
 
     setState(() {
-      // Menangkap hasil kembalian dari map Controller
       _hasilGanjilGenap = hasil['ganjilGenap']!;
       _hasilPrima = hasil['prima']!;
     });
@@ -36,105 +34,149 @@ class _BilanganPageState extends State<BilanganPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Cek Bilangan')),
+      backgroundColor: Colors.white, // Background putih bersih
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(
+          color: Colors.black,
+        ), // Tombol back hitam
+        title: const Text(
+          'Cek Bilangan',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: 20,
+          ),
+        ),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            TextField(
+            const Icon(Icons.numbers_outlined, size: 64, color: Colors.black87),
+            const SizedBox(height: 24),
+
+            // Input field minimalis
+            _inputField(
+              hint: 'Masukkan Angka Bulat',
               controller: _angkaController,
-              keyboardType: TextInputType.number,
-              maxLength: 18, 
-              decoration: const InputDecoration(
-                labelText: 'Masukin Angka Bulat',
-                prefixIcon: Icon(Icons.numbers_outlined),
-                counterText: "", 
-              ),
             ),
             const SizedBox(height: 24),
+
+            // Tombol style monochrome
             ElevatedButton(
               onPressed: _cekBilangan,
-              style: ElevatedButton.styleFrom(
-                minimumSize: const Size(double.infinity, 55),
-                backgroundColor: Colors.blueGrey[900], 
-                foregroundColor: Colors.white,
+              style: _buttonStyle(),
+              child: const Text(
+                'Cek Sekarang',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1,
+                ),
               ),
-              child: const Text('Cek Sekarang', style: TextStyle(fontSize: 18)),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 48),
 
-            // Tampilan Hasil (Nggak ada yang diubah)
-            _buildResultCard(context),
+            // Tampilan Hasil yang Clean & Elegan (Dimodifikasi sesuai request)
+            _buildResultCard(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildResultCard(BuildContext context) {
+  Widget _buildResultCard() {
     return Container(
-      padding: const EdgeInsets.all(25),
-      width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 15,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(
+          color: Colors.grey.shade200,
+          width: 1.5,
+        ), // Hanya pakai garis tepi tipis
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center, // Rata tengah
         children: [
-          const Text(
-            'Hasil Analisa:',
+          Text(
+            'HASIL ANALISA',
             style: TextStyle(
-              fontSize: 16,
-              color: Colors.blueGrey,
+              fontSize: 12,
+              letterSpacing: 1.5,
               fontWeight: FontWeight.bold,
+              color: Colors.grey.shade500,
             ),
           ),
-          const SizedBox(height: 20),
-          _buildHasilItem(
-            Icons.repeat_one_outlined,
+          const SizedBox(height: 24),
+          // Hapus icon dan tampilkan teks rata tengah
+          Text(
             _hasilGanjilGenap,
-            Colors.teal,
+            textAlign: TextAlign.center, // Rata tengah
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
           ),
-          const Divider(),
-          _buildHasilItem(Icons.star_outline, _hasilPrima, Colors.orange),
+          const Divider(height: 32, color: Colors.black12),
+          Text(
+            _hasilPrima,
+            textAlign: TextAlign.center, // Rata tengah
+            style: const TextStyle(
+              fontSize: 18,
+              fontWeight: FontWeight.w600,
+              color: Colors.black,
+            ),
+          ),
         ],
       ),
     );
   }
 
-  Widget _buildHasilItem(IconData icon, String text, Color color) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Text(
-              text,
-              style: const TextStyle(
-                fontSize: 18,
-                fontWeight: FontWeight.w600,
-                color: Colors.black87,
-              ),
-            ),
-          ),
-        ],
+  // Fungsi helper _buildHasilItem() dihapus karena tidak digunakan lagi.
+
+  // Helper untuk TextField bergaya Monochrome
+  Widget _inputField({
+    required String hint,
+    required TextEditingController controller,
+  }) {
+    return TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      maxLength: 18,
+      style: const TextStyle(color: Colors.black, fontSize: 18),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
+        counterText: "",
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: 20,
+          vertical: 18,
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.black, width: 2),
+        ),
       ),
+    );
+  }
+
+  // Helper untuk style button bergaya Monochrome
+  ButtonStyle _buttonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: Colors.black,
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 18),
+      elevation: 0,
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 }

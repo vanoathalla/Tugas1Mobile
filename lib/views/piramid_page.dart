@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../controllers/piramid_controller.dart'; // Import controllernya
+import '../controllers/piramid_controller.dart'; 
 
 class PiramidPage extends StatefulWidget {
   const PiramidPage({super.key});
@@ -25,14 +25,12 @@ class _PiramidPageState extends State<PiramidPage> {
   }
 
   void _hitungPiramid() {
-    // Lempar inputan ke Controller
     final hasil = _controller.hitungPiramid(
       _sisiController.text,
       _tinggiController.text,
     );
 
     setState(() {
-      // Tangkap hasil dari Map
       _hasilVolume = hasil['volume']!;
       _hasilLuas = hasil['luas']!;
     });
@@ -41,140 +39,135 @@ class _PiramidPageState extends State<PiramidPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Luas & Volume Piramid')),
+      backgroundColor: Colors.white, // Background putih bersih
+      appBar: AppBar(
+        backgroundColor: Colors.white,
+        elevation: 0,
+        iconTheme: const IconThemeData(color: Colors.black), // Tombol back hitam
+        title: const Text(
+          'Luas & Volume Piramid',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600, fontSize: 20),
+        ),
+      ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(20.0),
+        padding: const EdgeInsets.all(24.0),
         child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            // Input Fields modern
-            TextField(
+            const Icon(Icons.change_history_outlined, size: 64, color: Colors.black87),
+            const SizedBox(height: 24),
+
+            // Input Fields minimalis
+            _inputField(
+              hint: 'Panjang Sisi Alas (a)',
               controller: _sisiController,
-              keyboardType: TextInputType.number,
-              maxLength: 15, 
-              decoration: const InputDecoration(
-                labelText: 'Panjang Sisi Alas (a)',
-                prefixIcon: Icon(Icons.line_weight_outlined),
-                counterText: "", 
-              ),
             ),
             const SizedBox(height: 16),
-            TextField(
+            _inputField(
+              hint: 'Tinggi Piramida (h)',
               controller: _tinggiController,
-              keyboardType: TextInputType.number,
-              maxLength: 15, 
-              decoration: const InputDecoration(
-                labelText: 'Tinggi Piramida (h)',
-                prefixIcon: Icon(Icons.height_outlined),
-                counterText: "", 
-              ),
             ),
-            const SizedBox(height: 32),
+            const SizedBox(height: 24),
 
-            // Tombol Hitung responsif ala iOS
+            // Tombol style monochrome
             ElevatedButton(
               onPressed: _hitungPiramid,
-              style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.blueGrey[900],
-                foregroundColor: Colors.white, 
-                minimumSize: const Size(double.infinity, 55),
-              ),
-              child: const Text(
-                'Hitung Sekarang',
-                style: TextStyle(fontSize: 18),
-              ),
+              style: _buttonStyle(),
+              child: const Text('Hitung Sekarang', style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold, letterSpacing: 1)),
             ),
-            const SizedBox(height: 40),
+            const SizedBox(height: 48),
 
-            // Tampilan Hasil Modern ala iOS (TIDAK DIUBAH)
-            _buildResultCard(context),
+            // Tampilan Hasil Clean tanpa Icon
+            _buildResultCard(),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildResultCard(BuildContext context) {
+  Widget _buildResultCard() {
     return Container(
-      padding: const EdgeInsets.all(25),
-      width: double.infinity,
+      padding: const EdgeInsets.all(24),
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(25),
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 15,
-            offset: const Offset(0, 10),
-          ),
-        ],
+        color: Colors.grey.shade50,
+        borderRadius: BorderRadius.circular(12),
+        border: Border.all(color: Colors.grey.shade200, width: 1.5),
       ),
       child: Column(
+        crossAxisAlignment: CrossAxisAlignment.center, // Teks rata tengah
         children: [
-          const Text(
-            'Hasil Perhitungan:',
+          Text(
+            'HASIL PERHITUNGAN',
             style: TextStyle(
-              fontSize: 16,
-              color: Colors.blueGrey,
+              fontSize: 12,
+              letterSpacing: 1.5,
               fontWeight: FontWeight.bold,
+              color: Colors.grey.shade500,
             ),
           ),
-          const SizedBox(height: 20),
-          _buildHasilItem(
-            Icons.view_in_ar_outlined,
+          const SizedBox(height: 24),
+          
+          // Bagian Volume
+          Text(
             'Volume (V)',
-            _hasilVolume,
-            Colors.indigo,
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontWeight: FontWeight.w600),
           ),
-          const Divider(),
-          _buildHasilItem(
-            Icons.architecture_outlined,
-            'Luas (Lp)',
+          const SizedBox(height: 4),
+          Text(
+            _hasilVolume,
+            style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: -1.0),
+          ),
+          
+          const Divider(height: 32, color: Colors.black12),
+          
+          // Bagian Luas Permukaan
+          Text(
+            'Luas Permukaan (Lp)',
+            style: TextStyle(fontSize: 14, color: Colors.grey.shade600, fontWeight: FontWeight.w600),
+          ),
+          const SizedBox(height: 4),
+          Text(
             _hasilLuas,
-            Colors.indigoAccent,
+            style: const TextStyle(fontSize: 36, fontWeight: FontWeight.w900, color: Colors.black, letterSpacing: -1.0),
           ),
         ],
       ),
     );
   }
 
-  Widget _buildHasilItem(
-    IconData icon,
-    String label,
-    String value,
-    Color color,
-  ) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 10),
-      child: Row(
-        children: [
-          Container(
-            padding: const EdgeInsets.all(10),
-            decoration: BoxDecoration(
-              color: color.withOpacity(0.1),
-              shape: BoxShape.circle,
-            ),
-            child: Icon(icon, color: color),
-          ),
-          const SizedBox(width: 15),
-          Expanded(
-            child: Text(
-              label,
-              style: const TextStyle(
-                fontSize: 16,
-                color: Colors.blueGrey,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          Text(
-            value,
-            style: const TextStyle(
-              fontSize: 24,
-              fontWeight: FontWeight.bold,
-              color: Colors.black87,
-            ),
-          ),
-        ],
+  // Helper untuk TextField bergaya Monochrome
+  Widget _inputField({required String hint, required TextEditingController controller}) {
+    return TextField(
+      controller: controller,
+      keyboardType: TextInputType.number,
+      maxLength: 15, 
+      style: const TextStyle(color: Colors.black, fontSize: 18),
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
+        counterText: "", 
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 18),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
+        ),
+        focusedBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(color: Colors.black, width: 2),
+        ),
+      ),
+    );
+  }
+
+  // Helper untuk style button bergaya Monochrome
+  ButtonStyle _buttonStyle() {
+    return ElevatedButton.styleFrom(
+      backgroundColor: Colors.black,
+      foregroundColor: Colors.white,
+      padding: const EdgeInsets.symmetric(vertical: 18),
+      elevation: 0,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(10),
       ),
     );
   }

@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'dashboard_page.dart';
-import '../controllers/login_controller.dart'; // Import controllernya
+import '../controllers/login_controller.dart';
 
 class LoginPage extends StatefulWidget {
   const LoginPage({super.key});
@@ -25,21 +25,21 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _login({required String username, required String password}) {
-    // View bertanya ke Controller apakah loginnya valid
     bool isLoginValid = _controller.validasiLogin(username, password);
 
     if (isLoginValid) {
-      // Jika true, View bertugas melakukan navigasi
       Navigator.pushReplacement(
         context,
         MaterialPageRoute(builder: (context) => const DashboardPage()),
       );
     } else {
-      // Jika false, View bertugas menampilkan notifikasi gagal
       ScaffoldMessenger.of(context).showSnackBar(
         const SnackBar(
-          backgroundColor: Colors.red,
-          content: Text("Login gagal! Username atau Password salah ye!"),
+          backgroundColor: Colors.black87, // Disesuaikan dengan tema monochrome
+          content: Text(
+            "Login gagal! Username atau Password salah.",
+            style: TextStyle(color: Colors.white),
+          ),
         ),
       );
     }
@@ -48,7 +48,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.blueGrey[50],
+      backgroundColor: Colors.white, // Background putih bersih
       body: Center(
         child: SingleChildScrollView(
           padding: const EdgeInsets.all(30.0),
@@ -58,25 +58,28 @@ class _LoginPageState extends State<LoginPage> {
               mainAxisAlignment: MainAxisAlignment.center,
               crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Icon(
-                  Icons.dashboard_customize_outlined,
-                  size: 100,
-                  color: Colors.blueGrey[800],
+                const Icon(
+                  Icons
+                      .lock_person_outlined, // Icon diganti biar lebih pas buat login
+                  size: 80,
+                  color: Colors.black,
                 ),
-                const SizedBox(height: 10),
+                const SizedBox(height: 20),
                 const Text(
-                  'Tugas Mobile App',
+                  'Selamat Datang',
                   textAlign: TextAlign.center,
                   style: TextStyle(
-                    fontSize: 32,
+                    fontSize: 28,
                     fontWeight: FontWeight.w900,
-                    color: Colors.black87,
+                    letterSpacing: -0.5,
+                    color: Colors.black,
                   ),
                 ),
-                const Text(
-                  'Pemrograman Aplikasi Mobile',
+                const SizedBox(height: 8),
+                Text(
+                  'Silakan masuk untuk melanjutkan',
                   textAlign: TextAlign.center,
-                  style: TextStyle(fontSize: 16, color: Colors.black54),
+                  style: TextStyle(fontSize: 15, color: Colors.grey.shade600),
                 ),
                 const SizedBox(height: 50),
 
@@ -99,7 +102,7 @@ class _LoginPageState extends State<LoginPage> {
                       _obscurePassword
                           ? Icons.visibility_off_outlined
                           : Icons.visibility_outlined,
-                      color: Colors.blueGrey,
+                      color: Colors.black54,
                     ),
                     onPressed: () {
                       setState(() {
@@ -111,6 +114,7 @@ class _LoginPageState extends State<LoginPage> {
 
                 const SizedBox(height: 32),
 
+                // Tombol Log in style minimalis
                 ElevatedButton(
                   onPressed: () {
                     _login(
@@ -119,28 +123,26 @@ class _LoginPageState extends State<LoginPage> {
                     );
                   },
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Colors.blueGrey[900],
+                    backgroundColor: Colors.black, // Warna solid pekat
                     foregroundColor: Colors.white,
-                    padding: const EdgeInsets.symmetric(vertical: 15),
+                    padding: const EdgeInsets.symmetric(vertical: 18),
+                    elevation: 0, // Tanpa bayangan
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(15),
+                      borderRadius: BorderRadius.circular(
+                        10,
+                      ), // Ujungnya nggak terlalu melengkung
                     ),
-                    elevation: 2,
                   ),
                   child: const Text(
-                    'Log In',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
+                    'Masuk',
+                    style: TextStyle(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      letterSpacing: 1,
+                    ),
                   ),
                 ),
-                const SizedBox(height: 16),
-                const Text(
-                  'Lupa Kata Sandi?',
-                  textAlign: TextAlign.center,
-                  style: TextStyle(
-                    color: Colors.blueGrey,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
+                const SizedBox(height: 24),
               ],
             ),
           ),
@@ -149,7 +151,7 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  // Fungsi helper untuk Textfield (TIDAK DIUBAH SAMA SEKALI)
+  // Fungsi helper UI Minimalist
   Widget _loginField({
     required String label,
     required IconData icon,
@@ -160,19 +162,26 @@ class _LoginPageState extends State<LoginPage> {
     return TextField(
       controller: inputController,
       obscureText: isPassword,
+      style: const TextStyle(color: Colors.black),
       decoration: InputDecoration(
         labelText: label,
-        prefixIcon: Icon(icon, color: Colors.blueGrey),
+        labelStyle: TextStyle(color: Colors.grey.shade600),
+        prefixIcon: Icon(icon, color: Colors.black87),
         suffixIcon: suffixIcon,
-        filled: true,
-        fillColor: const Color(0xFFECEFF1),
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: BorderSide.none,
+        filled: false, // Background transparan
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(10),
+          borderSide: BorderSide(
+            color: Colors.grey.shade300,
+            width: 1.5,
+          ), // Garis abu-abu tipis
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(15),
-          borderSide: const BorderSide(color: Colors.blueGrey, width: 2),
+          borderRadius: BorderRadius.circular(10),
+          borderSide: const BorderSide(
+            color: Colors.black,
+            width: 2,
+          ), // Garis hitam tebal pas diketik
         ),
       ),
     );

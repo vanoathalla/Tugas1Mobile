@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
-import 'login_page.dart';
-import 'kelompok_page.dart';
 import 'kalkulator_page.dart';
 import 'bilangan_page.dart';
 import 'jumlah_field_page.dart';
-import 'stopwatch_page.dart';
 import 'piramid_page.dart';
+import 'stopwatch_page.dart';
+import 'kelompok_page.dart';
+import 'login_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -13,108 +13,149 @@ class DashboardPage extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Colors.white,
       appBar: AppBar(
-        title: const Text('Dashboard Menu Utama'),
+        backgroundColor: Colors.white,
+        elevation: 0,
+        title: const Text(
+          'Menu Utama',
+          style: TextStyle(
+            color: Colors.black,
+            fontWeight: FontWeight.w600,
+            fontSize: 22,
+          ),
+        ),
+        // Tombol Logout dipindah ke AppBar sini bre
         actions: [
           IconButton(
-            icon: const Icon(Icons.logout),
+            icon: const Icon(Icons.logout_outlined, color: Colors.redAccent),
+            tooltip: 'Keluar',
             onPressed: () {
-              // Logout dengan menghapus history menggunakan pushReplacement
               Navigator.pushReplacement(
                 context,
                 MaterialPageRoute(builder: (context) => const LoginPage()),
               );
             },
           ),
+          const SizedBox(width: 8), // Kasih jarak dikit di pojok kanan
         ],
       ),
-      body: SafeArea(
-        child: GridView.count(
-          padding: const EdgeInsets.all(16),
-          crossAxisCount: 2,
-          crossAxisSpacing: 16,
-          mainAxisSpacing: 16,
-          childAspectRatio: 1.1,
-          children: [
-            // Sekarang kita mengirim Widget Halaman langsung, bukan text '/route'
-            _buildMenuCard(
-              context,
-              Icons.group_outlined,
-              'Data Kelompok',
-              const KelompokPage(),
-              Colors.teal,
-            ),
-            _buildMenuCard(
-              context,
-              Icons.calculate_outlined,
-              'Kalkulator +/-',
-              const KalkulatorPage(),
-              Colors.blue,
-            ),
-            _buildMenuCard(
-              context,
-              Icons.numbers_outlined,
-              'Cek Bilangan',
-              const BilanganPage(),
-              Colors.orange,
-            ),
-            _buildMenuCard(
-              context,
-              Icons.add_chart_outlined,
-              'Jumlah Field',
-              const JumlahFieldPage(),
-              Colors.purple,
-            ),
-            _buildMenuCard(
-              context,
-              Icons.timer_outlined,
-              'Stopwatch',
-              const StopwatchPage(),
-              Colors.red,
-            ),
-            _buildMenuCard(
-              context,
-              Icons.change_history_outlined,
-              'Hitung Piramid',
-              const PiramidPage(),
-              Colors.indigo,
-            ),
-          ],
-        ),
+      body: ListView(
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 10),
+        children: [
+          _buildMinimalistTile(
+            context,
+            'Kalkulator',
+            'Hitung tambah dan kurang',
+            Icons.calculate_outlined,
+            const KalkulatorPage(),
+          ),
+          _buildMinimalistTile(
+            context,
+            'Cek Bilangan',
+            'Ganjil genap dan prima',
+            Icons.numbers_outlined,
+            const BilanganPage(),
+          ),
+          _buildMinimalistTile(
+            context,
+            'Jumlah Field',
+            'Penjumlahan deret angka',
+            Icons.add_box_outlined,
+            const JumlahFieldPage(),
+          ),
+          _buildMinimalistTile(
+            context,
+            'Luas Piramid',
+            'Hitung volume dan luas permukaan',
+            Icons.change_history_outlined,
+            const PiramidPage(),
+          ),
+          _buildMinimalistTile(
+            context,
+            'Stopwatch',
+            'Penghitung waktu presisi',
+            Icons.timer_outlined,
+            const StopwatchPage(),
+          ),
+          _buildMinimalistTile(
+            context,
+            'Anggota Kelompok',
+            'Daftar tim pengembang',
+            Icons.people_outline,
+            const KelompokPage(),
+          ),
+        ],
       ),
     );
   }
 
-  // Parameter string route diganti menjadi Widget targetPage
-  Widget _buildMenuCard(
+  // Fungsi helper UI Minimalist
+  Widget _buildMinimalistTile(
     BuildContext context,
-    IconData icon,
     String title,
-    Widget targetPage,
-    Color color,
+    String subtitle,
+    IconData icon,
+    Widget page,
   ) {
-    return InkWell(
-      onTap: () {
-        // Navigasi pindah halaman menggunakan MaterialPageRoute
-        Navigator.push(
-          context,
-          MaterialPageRoute(builder: (context) => targetPage),
-        );
-      },
-      child: Card(
-        elevation: 2,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            Icon(icon, size: 40, color: color),
-            const SizedBox(height: 12),
-            Text(
-              title,
-              style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 14),
-              textAlign: TextAlign.center,
-            ),
-          ],
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: InkWell(
+        onTap: () {
+          Navigator.push(
+            context,
+            MaterialPageRoute(builder: (context) => page),
+          );
+        },
+        borderRadius: BorderRadius.circular(12),
+        child: Container(
+          padding: const EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            border: Border.all(color: Colors.grey.shade300, width: 1.5),
+          ),
+          child: Row(
+            children: [
+              Container(
+                padding: const EdgeInsets.all(10),
+                decoration: BoxDecoration(
+                  color: Colors.grey.shade100,
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Icon(icon, color: Colors.black87),
+              ),
+              const SizedBox(width: 16),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      title,
+                      style: const TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
+                    ),
+                    const SizedBox(height: 4),
+                    Text(
+                      subtitle,
+                      style: TextStyle(
+                        fontSize: 13,
+                        color: Colors.grey.shade600,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Icon(
+                Icons.arrow_forward_ios,
+                size: 16,
+                color: Colors.grey.shade400,
+              ),
+            ],
+          ),
         ),
       ),
     );
