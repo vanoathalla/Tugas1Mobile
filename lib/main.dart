@@ -12,7 +12,7 @@ class TugasMobileApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
-      title: 'Tugas Mobile 1',
+      title: 'Tugas Mobile 2',
       theme: ThemeData(colorScheme: const ColorScheme.light()),
       home: const LoginPage(),
     );
