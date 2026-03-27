@@ -88,8 +88,4 @@ flutter:
   # For details regarding fonts from package dependencies,
   # see https://flutter.dev/to/font-from-package
 dependencies:
-  flutter:
-    sdk: flutter
-
-  # TAMBAHKAN BARIS INI BRE:
-  intl: ^0.18.1
+  hijri: ^3.0.0
