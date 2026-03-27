@@ -1,18 +1,11 @@
-import 'dart:math';
-
 class PiramidController {
-  Map<String, String> hitungPiramid(String sisiText, String tinggiText) {
-    double sisi = double.tryParse(sisiText) ?? 0;
-    double tinggi = double.tryParse(tinggiText) ?? 0;
+  // Menghitung Luas Permukaan
+  double hitungLuas(double sisi, double tinggiTegak) {
+    return (sisi * sisi) + (2 * sisi * tinggiTegak);
+  }
 
-    double volume = (1 / 3) * (sisi * sisi) * tinggi;
-
-    double tinggiMiring = sqrt(pow((sisi / 2), 2) + pow(tinggi, 2));
-    double luasPermukaan = (sisi * sisi) + (4 * (0.5 * sisi * tinggiMiring));
-
-    return {
-      'volume': volume.toStringAsFixed(2),
-      'luas': luasPermukaan.toStringAsFixed(2),
-    };
+  // Menghitung Volume
+  double hitungVolume(double sisi, double tinggi) {
+    return (1 / 3) * (sisi * sisi) * tinggi;
   }
 }

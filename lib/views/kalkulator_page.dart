@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import '../controllers/kalkulator_controller.dart';
 
 class KalkulatorPage extends StatefulWidget {
@@ -9,48 +10,64 @@ class KalkulatorPage extends StatefulWidget {
 }
 
 class _KalkulatorPageState extends State<KalkulatorPage> {
-  final TextEditingController _angka1Controller = TextEditingController();
-  final TextEditingController _angka2Controller = TextEditingController();
-  String _hasil = '0';
-
+  final TextEditingController _displayController = TextEditingController();
+  final FocusNode _focusNode = FocusNode();
   final KalkulatorController _controller = KalkulatorController();
+
+  String _angkaPertama = "";
+  String _operasi = "";
+  String _hasil = "";
+  bool _isDone = false; // Flag penanda tombol = sudah ditekan
 
   @override
   void dispose() {
-    _angka1Controller.dispose();
-    _angka2Controller.dispose();
+    _displayController.dispose();
+    _focusNode.dispose();
     super.dispose();
   }
 
-  void _showError(String pesan) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.black87,
-        content: Text(pesan, style: const TextStyle(color: Colors.white)),
-      ),
-    );
-  }
-
-  void _hitung(String operasi) {
-    if (_angka1Controller.text.isEmpty || _angka2Controller.text.isEmpty) {
-      _showError("Kolom angkanya jangan dikosongin ye.");
-      return;
-    }
-    if (double.tryParse(_angka1Controller.text) == null ||
-        double.tryParse(_angka2Controller.text) == null) {
-      _showError("Inputan ngawur! Masukin angka yang bener.");
-      return;
-    }
-
-    String hasilAkhir = _controller.hitung(
-      _angka1Controller.text,
-      _angka2Controller.text,
-      operasi,
-    );
-
+  void _handleInput(String value) {
     setState(() {
-      _hasil = hasilAkhir;
+      if (value == "C") {
+        _displayController.clear();
+        _angkaPertama = "";
+        _operasi = "";
+        _hasil = "";
+        _isDone = false;
+      } else if (value == "⌫") {
+        if (!_isDone && _displayController.text.isNotEmpty) {
+          _displayController.text = _displayController.text
+              .substring(0, _displayController.text.length - 1);
+        }
+      } else if (value == "+" || value == "-") {
+        if (_displayController.text.isNotEmpty && !_isDone) {
+          _angkaPertama = _displayController.text;
+          _operasi = value;
+          _displayController.text = "$_angkaPertama$_operasi";
+        }
+      } else if (value == "=") {
+        if (_angkaPertama.isNotEmpty && _operasi.isNotEmpty && !_isDone) {
+          String fullText = _displayController.text;
+          String angkaKedua = fullText.substring(_angkaPertama.length + 1);
+
+          if (angkaKedua.isNotEmpty) {
+            // Memanggil logika hitung asli dari controller
+            _hasil = _controller.hitung(_angkaPertama, angkaKedua, _operasi);
+            _isDone = true; // Angka input otomatis naik & jadi abu-abu
+          }
+        }
+      } else {
+        // Reset jika input angka baru setelah hasil keluar
+        if (_isDone) {
+          _displayController.text = value;
+          _hasil = "";
+          _isDone = false;
+          _angkaPertama = "";
+          _operasi = "";
+        } else {
+          _displayController.text += value;
+        }
+      }
     });
   }
 
@@ -62,150 +79,107 @@ class _KalkulatorPageState extends State<KalkulatorPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          'Kalkulator +/-',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
+        title: const Text('Kalkulator',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
+      ),
+      body: RawKeyboardListener(
+        focusNode: _focusNode,
+        autofocus: true,
+        onKey: (event) {
+          if (event is RawKeyDownEvent) {
+            if (event.logicalKey == LogicalKeyboardKey.enter) _handleInput("=");
+            if (event.logicalKey == LogicalKeyboardKey.escape)
+              _handleInput("C");
+            if (event.logicalKey == LogicalKeyboardKey.backspace)
+              _handleInput("⌫");
+          }
+        },
+        child: Column(
+          children: [
+            Padding(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 32.0, vertical: 40.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.end,
+                children: [
+                  // Baris Atas: Otomatis naik & jadi abu-abu setelah klik "="
+                  TextField(
+                    controller: _displayController,
+                    textAlign: TextAlign.right,
+                    readOnly: false,
+                    style: TextStyle(
+                        fontSize: _isDone ? 32 : 56, // Ukuran mengecil pas naik
+                        color: _isDone ? Colors.grey.shade400 : Colors.black,
+                        fontWeight: FontWeight.w500),
+                    decoration: const InputDecoration(
+                        border: InputBorder.none, hintText: "0"),
+                  ),
+                  const SizedBox(height: 10),
+                  // Baris Bawah: Hasil utama yang muncul setelah klik "="
+                  if (_isDone)
+                    Text(
+                      _hasil,
+                      style: const TextStyle(
+                          fontSize: 72,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black),
+                    ),
+                ],
+              ),
+            ),
+            const Spacer(),
+            // Area Tombol
+            Container(
+              padding: const EdgeInsets.all(16),
+              child: Column(
+                children: [
+                  _buildRow(["7", "8", "9", "⌫"]),
+                  _buildRow(["4", "5", "6", "C"]),
+                  _buildRow(["1", "2", "3", "="]),
+                  _buildRow(["0", "-", "+"]),
+                ],
+              ),
+            ),
+          ],
         ),
       ),
-      body: Center(
-        child: Padding(
-          padding: const EdgeInsets.all(24.0),
-          child: SingleChildScrollView(
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                const Icon(
-                  Icons.calculate_outlined,
-                  size: 64,
-                  color: Colors.black87,
-                ),
-                const SizedBox(height: 24),
-                _inputField(
-                  hint: "Masukkan Angka Pertama",
-                  controller: _angka1Controller,
-                ),
-                const SizedBox(height: 16),
-                _inputField(
-                  hint: "Masukkan Angka Kedua",
-                  controller: _angka2Controller,
-                ),
-                const SizedBox(height: 32),
-                Row(
-                  children: [
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => _hitung('+'),
-                        style: _buttonStyle(),
-                        child: const Text(
-                          "+",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 16),
-                    Expanded(
-                      child: ElevatedButton(
-                        onPressed: () => _hitung('-'),
-                        style: _buttonStyle(),
-                        child: const Text(
-                          "-",
-                          style: TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w400,
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-                const SizedBox(height: 48),
-                Container(
-                  padding: const EdgeInsets.symmetric(
-                    vertical: 24,
-                    horizontal: 16,
-                  ),
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade50,
-                    borderRadius: BorderRadius.circular(12),
-                    border: Border.all(color: Colors.grey.shade200, width: 1.5),
-                  ),
-                  child: Column(
-                    children: [
-                      Text(
-                        'HASIL PERHITUNGAN',
-                        style: TextStyle(
-                          fontSize: 12,
-                          letterSpacing: 1.5,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.grey.shade500,
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        _hasil,
-                        style: const TextStyle(
-                          fontSize: 48,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.black,
-                          letterSpacing: -1.5,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ],
-                  ),
-                ),
-              ],
+    );
+  }
+
+  Widget _buildRow(List<String> labels) {
+    return Row(
+      children: labels.map((label) => _buildButton(label)).toList(),
+    );
+  }
+
+  Widget _buildButton(String label) {
+    bool isOp = ["+", "-", "=", "C", "⌫"].contains(label);
+    return Expanded(
+      child: Padding(
+        padding: const EdgeInsets.all(8.0),
+        child: InkWell(
+          onTap: () => _handleInput(label),
+          borderRadius: BorderRadius.circular(15),
+          child: Container(
+            height: 70,
+            decoration: BoxDecoration(
+              color: isOp ? Colors.black : Colors.grey.shade100,
+              borderRadius: BorderRadius.circular(15),
+            ),
+            child: Center(
+              child: Text(label,
+                  style: TextStyle(
+                      color: isOp
+                          ? (label == "⌫"
+                              ? const Color.fromARGB(255, 230, 45, 45)
+                              : Colors.white)
+                          : Colors.black,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold)),
             ),
           ),
         ),
       ),
-    );
-  }
-
-  Widget _inputField({
-    required String hint,
-    required TextEditingController controller,
-  }) {
-    return TextField(
-      controller: controller,
-      keyboardType: TextInputType.number,
-      maxLength: 15,
-      style: const TextStyle(color: Colors.black, fontSize: 18),
-      decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
-        counterText: "",
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 18,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black, width: 2),
-        ),
-      ),
-    );
-  }
-
-  ButtonStyle _buttonStyle() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: Colors.black,
-      foregroundColor: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 16),
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
     );
   }
 }
