@@ -9,9 +9,12 @@
 // import 'screens/piramid_page.dart';
 
 import 'package:flutter/material.dart';
+import 'package:intl/date_symbol_data_local.dart'; // Import ini
 import 'views/login_page.dart';
 
 void main() {
+  WidgetsFlutterBinding.ensureInitialized();
+  await initializeDateFormatting('id_ID', null); // WAJIB: Biar gak error locale
   runApp(const TugasMobileApp());
 }
 

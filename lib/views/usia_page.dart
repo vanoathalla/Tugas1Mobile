@@ -9,12 +9,12 @@ class UsiaPage extends StatefulWidget {
 
 class _UsiaPageState extends State<UsiaPage> {
   final UsiaController _controller = UsiaController();
-  String _hasilUsia = "Pilih Waktu Lahir";
+  String _hasil = "Pilih waktu lahir";
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: const Text('Input Tanggal Lahir')),
+      appBar: AppBar(title: const Text('Detail Usia')),
       body: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
@@ -33,30 +33,21 @@ class _UsiaPageState extends State<UsiaPage> {
                     initialTime: TimeOfDay.now(),
                   );
                   if (t != null) {
-                    var res = _controller.hitungUsiaDetail(
-                      DateTime(d.year, d.month, d.day, t.hour, t.minute),
-                      DateTime.now(),
-                    );
                     setState(() {
-                      _hasilUsia =
-                          "${res['years']} Tahun, ${res['months']} Bulan, ${res['days']} Hari\n${res['hours']} Jam, ${res['minutes']} Menit";
+                      _hasil = _controller.hitungUsiaDetail(
+                        DateTime(d.year, d.month, d.day, t.hour, t.minute),
+                      );
                     });
                   }
                 }
               },
-              child: const Text("Pilih Tanggal & Jam"),
+              child: const Text("Input Tanggal & Jam"),
             ),
-            const SizedBox(height: 25),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: Text(
-                _hasilUsia,
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
+            const SizedBox(height: 20),
+            Text(
+              _hasil,
+              textAlign: TextAlign.center,
+              style: const TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
             ),
           ],
         ),
