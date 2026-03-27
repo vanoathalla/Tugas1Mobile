@@ -1,8 +1,13 @@
 import 'package:hijri/hijri_calendar.dart';
 
 class HijriahController {
-  String konversi(DateTime date) {
-    var hDate = HijriCalendar.fromDate(date);
-    return hDate.toVisualString(); // Contoh: 14 Ramadan 1445
+  String konversiKeHijriah(DateTime tanggal) {
+    try {
+      var hDate = HijriCalendar.fromDate(tanggal);
+      // Coba pakai susunan manual kalau toVisualString() masih merah
+      return "${hDate.hDay} ${hDate.longMonthName} ${hDate.hYear} H";
+    } catch (e) {
+      return "Format Error";
+    }
   }
 }

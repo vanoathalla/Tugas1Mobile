@@ -6,7 +6,7 @@ import 'piramid_page.dart';
 import 'stopwatch_page.dart';
 import 'kelompok_page.dart';
 import 'login_page.dart';
-import 'tanggal_konversi_page.dart';
+import 'weton_page.dart';
 import 'umur_page.dart';
 import 'hijriah_page.dart';
 
@@ -92,7 +92,7 @@ class DashboardPage extends StatelessWidget {
             'Konversi Weton',
             'Cek Hari dan Pasaran Jawa',
             Icons.calendar_month_outlined,
-            const TanggalKonversiPage(),
+            const WetonPage(),
           ),
           _buildMinimalistTile(
             context,

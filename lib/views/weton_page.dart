@@ -1,17 +1,17 @@
 import 'package:flutter/material.dart';
-import '../controllers/hijriah_controller.dart';
+import '../controllers/weton_controller.dart';
 
-class HijriahPage extends StatefulWidget {
-  const HijriahPage({super.key});
+class WetonPage extends StatefulWidget {
+  const WetonPage({super.key});
 
   @override
-  State<HijriahPage> createState() => _HijriahPageState();
+  State<WetonPage> createState() => _WetonPageState();
 }
 
-class _HijriahPageState extends State<HijriahPage> {
+class _WetonPageState extends State<WetonPage> {
   DateTime? _selectedDate;
   String _hasil = "-";
-  final HijriahController _controller = HijriahController();
+  final WetonController _controller = WetonController();
 
   void _pilihTanggal() async {
     DateTime? picked = await showDatePicker(
@@ -24,7 +24,7 @@ class _HijriahPageState extends State<HijriahPage> {
     if (picked != null) {
       setState(() {
         _selectedDate = picked;
-        _hasil = _controller.konversiKeHijriah(picked);
+        _hasil = _controller.hitungWeton(picked);
       });
     }
   }
@@ -37,8 +37,10 @@ class _HijriahPageState extends State<HijriahPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text('Masehi ke Hijriah',
-            style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600)),
+        title: const Text(
+          'Konversi Weton',
+          style: TextStyle(color: Colors.black, fontWeight: FontWeight.w600),
+        ),
       ),
       body: Center(
         child: Padding(
@@ -46,9 +48,14 @@ class _HijriahPageState extends State<HijriahPage> {
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              const Icon(Icons.mosque_outlined,
-                  size: 64, color: Colors.black87),
+              const Icon(
+                Icons.calendar_month_outlined,
+                size: 64,
+                color: Colors.black87,
+              ),
               const SizedBox(height: 24),
+
+              // Tombol pilih tanggal ala minimalis
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
@@ -57,17 +64,21 @@ class _HijriahPageState extends State<HijriahPage> {
                     backgroundColor: Colors.black,
                     padding: const EdgeInsets.symmetric(vertical: 16),
                     shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(10)),
+                      borderRadius: BorderRadius.circular(10),
+                    ),
                   ),
                   child: Text(
                     _selectedDate == null
-                        ? "PILIH TANGGAL MASEHI"
+                        ? "KLIK UNTUK PILIH TANGGAL"
                         : "${_selectedDate!.day}-${_selectedDate!.month}-${_selectedDate!.year}",
                     style: const TextStyle(color: Colors.white),
                   ),
                 ),
               ),
+
               const SizedBox(height: 48),
+
+              // Kotak hasil (Style-nya sama kek kalkulatormu)
               Container(
                 width: double.infinity,
                 padding: const EdgeInsets.all(24),
@@ -78,19 +89,24 @@ class _HijriahPageState extends State<HijriahPage> {
                 ),
                 child: Column(
                   children: [
-                    Text('TANGGAL HIJRIAH',
-                        style: TextStyle(
-                            fontSize: 12,
-                            fontWeight: FontWeight.bold,
-                            color: Colors.grey.shade500,
-                            letterSpacing: 1.5)),
+                    Text(
+                      'HARI & PASARAN',
+                      style: TextStyle(
+                        fontSize: 12,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.grey.shade500,
+                        letterSpacing: 1.5,
+                      ),
+                    ),
                     const SizedBox(height: 8),
-                    Text(_hasil,
-                        textAlign: TextAlign.center,
-                        style: const TextStyle(
-                            fontSize: 28,
-                            fontWeight: FontWeight.w900,
-                            color: Colors.black)),
+                    Text(
+                      _hasil,
+                      style: const TextStyle(
+                        fontSize: 32,
+                        fontWeight: FontWeight.w900,
+                        color: Colors.black,
+                      ),
+                    ),
                   ],
                 ),
               ),

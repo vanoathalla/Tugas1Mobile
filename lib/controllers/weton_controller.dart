@@ -1,5 +1,6 @@
 class WetonController {
-  String hitungWeton(DateTime date) {
+  String hitungWeton(DateTime tanggal) {
+    // Daftar nama hari dan pasaran
     List<String> hari = [
       "Senin",
       "Selasa",
@@ -11,13 +12,13 @@ class WetonController {
     ];
     List<String> pasaran = ["Legi", "Pahing", "Pon", "Wage", "Kliwon"];
 
-    // Base date untuk perhitungan Jawa (contoh: 1 Januari 1970 adalah Kamis Pon)
+    // 1 Januari 1970 itu hari Kamis (index 3) dan pasaran Pon (index 2)
     DateTime baseDate = DateTime(1970, 1, 1);
-    int diff = date.difference(baseDate).inDays;
+    int selisihHari = tanggal.difference(baseDate).inDays;
 
-    String namaHari = hari[(date.weekday - 1)];
-    // Offset 2 karena 1 Jan 1970 adalah Pon (index 2)
-    String namaPasaran = pasaran[(diff + 2) % 5];
+    String namaHari = hari[(tanggal.weekday - 1)];
+    // Rumus pasaran: selisih hari + index dasar (2 untuk Pon) modulo 5
+    String namaPasaran = pasaran[(selisihHari + 2) % 5];
 
     return "$namaHari $namaPasaran";
   }

@@ -1,15 +1,29 @@
-class UsiaController {
-  String hitungUsiaDetail(DateTime birth) {
-    DateTime now = DateTime.now();
-    Duration diff = now.difference(birth);
+class UmurController {
+  Map<String, int> hitungDetail(DateTime lahir) {
+    DateTime sekarang = DateTime.now();
+    Duration diff = sekarang.difference(lahir);
 
-    int years = now.year - birth.year;
-    int months = now.month - birth.month;
-    if (months < 0 || (months == 0 && now.day < birth.day)) {
-      years--;
-      months += 12;
+    int tahun = sekarang.year - lahir.year;
+    int bulan = sekarang.month - lahir.month;
+    int hari = sekarang.day - lahir.day;
+
+    // Logika penyesuaian jika hari/bulan minus
+    if (hari < 0) {
+      bulan--;
+      // Ambil tanggal terakhir dari bulan sebelumnya
+      hari += DateTime(sekarang.year, sekarang.month, 0).day;
+    }
+    if (bulan < 0) {
+      tahun--;
+      bulan += 12;
     }
 
-    return "$years Tahun, $months Bulan\n${diff.inDays % 30} Hari\n${diff.inHours % 24} Jam, ${diff.inMinutes % 60} Menit";
+    return {
+      "tahun": tahun,
+      "bulan": bulan,
+      "hari": hari,
+      "jam": diff.inHours % 24,
+      "menit": diff.inMinutes % 60,
+    };
   }
 }
