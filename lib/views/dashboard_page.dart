@@ -6,6 +6,9 @@ import 'piramid_page.dart';
 import 'stopwatch_page.dart';
 import 'kelompok_page.dart';
 import 'login_page.dart';
+import 'weton_page.dart';
+import 'umur_page.dart';
+import 'hijriah_page.dart';
 
 class DashboardPage extends StatelessWidget {
   const DashboardPage({super.key});
@@ -83,6 +86,27 @@ class DashboardPage extends StatelessWidget {
             'Data Anggota',
             Icons.people_outline,
             const KelompokPage(),
+          ),
+          _buildMinimalistTile(
+            context,
+            'Konversi Weton',
+            'Cek Hari dan Pasaran Jawa',
+            Icons.calendar_month_outlined,
+            const WetonPage(),
+          ),
+          _buildMinimalistTile(
+            context,
+            'Hitung Umur Detail',
+            'Tahun, Bulan, Hari, Jam, Menit',
+            Icons.hourglass_empty_outlined,
+            const UmurPage(),
+          ),
+          _buildMinimalistTile(
+            context,
+            'Masehi ke Hijriah',
+            'Konversi Kalender Islam',
+            Icons.mosque_outlined,
+            const HijriahPage(),
           ),
         ],
       ),

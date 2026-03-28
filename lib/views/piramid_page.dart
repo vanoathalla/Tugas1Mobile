@@ -11,47 +11,31 @@ class PiramidPage extends StatefulWidget {
 class _PiramidPageState extends State<PiramidPage> {
   final TextEditingController _sisiController = TextEditingController();
   final TextEditingController _tinggiController = TextEditingController();
-  String _hasilVolume = '0.00';
-  String _hasilLuas = '0.00';
-
   final PiramidController _controller = PiramidController();
 
-  @override
-  void dispose() {
-    _sisiController.dispose();
-    _tinggiController.dispose();
-    super.dispose();
-  }
+  String _hasilLuas = "0";
+  String _hasilVolume = "0";
+  String _pesanPeringatan = "";
 
-  void _showError(String pesan) {
-    ScaffoldMessenger.of(context).clearSnackBars();
-    ScaffoldMessenger.of(context).showSnackBar(
-      SnackBar(
-        backgroundColor: Colors.black87,
-        content: Text(pesan, style: const TextStyle(color: Colors.white)),
-      ),
-    );
-  }
-
-  void _hitungPiramid() {
-    if (_sisiController.text.isEmpty || _tinggiController.text.isEmpty) {
-      _showError("Panjang sisi sama tinggi ga boleh kosong ye.");
-      return;
-    }
-    if (double.tryParse(_sisiController.text) == null ||
-        double.tryParse(_tinggiController.text) == null) {
-      _showError("Inputan ngawur! Masukin format angka yang bener pak.");
-      return;
-    }
-
-    final hasil = _controller.hitungPiramid(
-      _sisiController.text,
-      _tinggiController.text,
-    );
-
+  void _hitung() {
     setState(() {
-      _hasilVolume = hasil['volume']!;
-      _hasilLuas = hasil['luas']!;
+      double s = double.tryParse(_sisiController.text) ?? 0;
+      double t = double.tryParse(_tinggiController.text) ?? 0;
+
+      // Tetap hitung hasilnya
+      _hasilLuas = _controller.hitungLuas(s, t).toStringAsFixed(2);
+      _hasilVolume = _controller.hitungVolume(s, t).toStringAsFixed(2);
+
+      // Cek apakah ada input minus buat nampilin announcement
+      if (s < 0 || t < 0) {
+        _pesanPeringatan =
+            "⚠️ Catatan: SECARA FISIK PIRAMID GAK BOLEH MINUS YA, MASA AMBLAS KE BAWAH TANAH!";
+      } else if (s == 0 || t == 0) {
+        _pesanPeringatan =
+            "⚠️ Catatan: KALAU NOL ITU NAMANYA BUKA PIRAMID, TAPI TANAH DATAR.";
+      } else {
+        _pesanPeringatan = ""; // Kosongkan kalau input normal
+      }
     });
   }
 
@@ -63,155 +47,120 @@ class _PiramidPageState extends State<PiramidPage> {
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          'Luas & Volume Piramid',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
-        ),
+        title: const Text("Piramid",
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(24.0),
         child: Column(
-          crossAxisAlignment: CrossAxisAlignment.stretch,
+          crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            const Icon(
-              Icons.change_history_outlined,
-              size: 64,
-              color: Colors.black87,
-            ),
-            const SizedBox(height: 24),
-            _inputField(
-              hint: 'Panjang Sisi Alas (a)',
-              controller: _sisiController,
-            ),
-            const SizedBox(height: 16),
-            _inputField(
-              hint: 'Tinggi Piramida (h)',
-              controller: _tinggiController,
-            ),
-            const SizedBox(height: 24),
-            ElevatedButton(
-              onPressed: _hitungPiramid,
-              style: _buttonStyle(),
-              child: const Text(
-                'Hitung Sekarang',
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  letterSpacing: 1,
+            const Text("Masukkan Dimensi Piramid",
+                style: TextStyle(fontSize: 14, color: Colors.grey)),
+            const SizedBox(height: 25),
+
+            _buildInputField("Sisi Alas", _sisiController, Icons.square_foot),
+            const SizedBox(height: 20),
+            _buildInputField("Tinggi Tegak", _tinggiController, Icons.height),
+
+            const SizedBox(height: 30),
+
+            SizedBox(
+              width: double.infinity,
+              height: 55,
+              child: ElevatedButton(
+                onPressed: _hitung,
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(15)),
                 ),
+                child: const Text("Hitung Hasil",
+                    style: TextStyle(
+                        color: Colors.white, fontWeight: FontWeight.bold)),
               ),
             ),
-            const SizedBox(height: 48),
-            _buildResultCard(),
+
+            const SizedBox(height: 40),
+            const Divider(),
+            const SizedBox(height: 20),
+
+            // Box Hasil
+            Row(
+              children: [
+                _buildResultBox("LUAS", _hasilLuas),
+                const SizedBox(width: 15),
+                _buildResultBox("VOLUME", _hasilVolume),
+              ],
+            ),
+
+            const SizedBox(height: 25),
+
+            // ANNOUNCEMENT / PERINGATAN (Muncul di bawah hasil)
+            if (_pesanPeringatan.isNotEmpty)
+              Container(
+                width: double.infinity,
+                padding: const EdgeInsets.all(16),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 228, 17, 17),
+                  borderRadius: BorderRadius.circular(12),
+                  border: Border.all(color: const Color.fromARGB(255, 0, 0, 0)),
+                ),
+                child: Text(
+                  _pesanPeringatan,
+                  style: TextStyle(
+                      color: const Color.fromARGB(255, 255, 255, 255),
+                      fontSize: 13,
+                      fontWeight: FontWeight.w500),
+                ),
+              ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildResultCard() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      decoration: BoxDecoration(
-        color: Colors.grey.shade50,
-        borderRadius: BorderRadius.circular(12),
-        border: Border.all(color: Colors.grey.shade200, width: 1.5),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.center,
-        children: [
-          Text(
-            'HASIL PERHITUNGAN',
-            style: TextStyle(
-              fontSize: 12,
-              letterSpacing: 1.5,
-              fontWeight: FontWeight.bold,
-              color: Colors.grey.shade500,
-            ),
-          ),
-          const SizedBox(height: 24),
-          Text(
-            'Volume (V)',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _hasilVolume,
-            style: const TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w900,
-              color: Colors.black,
-              letterSpacing: -1.0,
-            ),
-          ),
-          const Divider(height: 32, color: Colors.black12),
-          Text(
-            'Luas Permukaan (Lp)',
-            style: TextStyle(
-              fontSize: 14,
-              color: Colors.grey.shade600,
-              fontWeight: FontWeight.w600,
-            ),
-          ),
-          const SizedBox(height: 4),
-          Text(
-            _hasilLuas,
-            style: const TextStyle(
-              fontSize: 36,
-              fontWeight: FontWeight.w900,
-              color: Colors.black,
-              letterSpacing: -1.0,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  Widget _inputField({
-    required String hint,
-    required TextEditingController controller,
-  }) {
+  Widget _buildInputField(
+      String label, TextEditingController controller, IconData icon) {
     return TextField(
       controller: controller,
       keyboardType: TextInputType.number,
-      maxLength: 15,
-      style: const TextStyle(color: Colors.black, fontSize: 18),
+      style: const TextStyle(fontWeight: FontWeight.bold),
       decoration: InputDecoration(
-        hintText: hint,
-        hintStyle: TextStyle(color: Colors.grey.shade400, fontSize: 16),
-        counterText: "",
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: 20,
-          vertical: 18,
-        ),
-        enabledBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: BorderSide(color: Colors.grey.shade300, width: 1.5),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(10),
-          borderSide: const BorderSide(color: Colors.black, width: 2),
-        ),
+        labelText: label,
+        prefixIcon: Icon(icon, color: Colors.black),
+        filled: true,
+        fillColor: Colors.grey.shade100,
+        border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(15),
+            borderSide: BorderSide.none),
       ),
     );
   }
 
-  ButtonStyle _buttonStyle() {
-    return ElevatedButton.styleFrom(
-      backgroundColor: Colors.black,
-      foregroundColor: Colors.white,
-      padding: const EdgeInsets.symmetric(vertical: 18),
-      elevation: 0,
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+  Widget _buildResultBox(String title, String value) {
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(20),
+        decoration: BoxDecoration(
+          color: Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(15),
+          border: Border.all(color: Colors.grey.shade200),
+        ),
+        child: Column(
+          children: [
+            Text(title,
+                style: const TextStyle(
+                    fontSize: 10,
+                    color: Colors.grey,
+                    fontWeight: FontWeight.bold)),
+            const SizedBox(height: 8),
+            Text(value,
+                style:
+                    const TextStyle(fontSize: 22, fontWeight: FontWeight.bold)),
+          ],
+        ),
+      ),
     );
   }
 }

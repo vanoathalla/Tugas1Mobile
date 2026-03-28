@@ -1,5 +1,6 @@
-import 'package:flutter/material.dart';
 import 'dart:async';
+import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import '../controllers/stopwatch_controller.dart';
 
 class StopwatchPage extends StatefulWidget {
@@ -12,26 +13,49 @@ class StopwatchPage extends StatefulWidget {
 class _StopwatchPageState extends State<StopwatchPage> {
   final StopwatchController _controller = StopwatchController();
   Timer? _timer;
+  int _elapsedMs = 0;
+  bool _isRunning = false;
+  bool _isSettingMode = true;
 
-  void _startTimer() {
-    _timer = Timer.periodic(const Duration(milliseconds: 30), (timer) {
-      if (mounted) {
-        setState(() {});
+  int _pickedHour = 0;
+  int _pickedMin = 0;
+  int _pickedSec = 0;
+
+  void _startStopwatch() {
+    if (_isRunning) return;
+
+    setState(() {
+      _isRunning = true;
+      _isSettingMode = false;
+      if (_elapsedMs == 0) {
+        _elapsedMs =
+            ((_pickedHour * 3600) + (_pickedMin * 60) + _pickedSec) * 1000;
       }
     });
-    _controller.start();
+
+    _timer = Timer.periodic(const Duration(milliseconds: 100), (timer) {
+      if (mounted) {
+        setState(() {
+          _elapsedMs += 100;
+        });
+      }
+    });
   }
 
-  void _stopTimer() {
+  void _stopStopwatch() {
     _timer?.cancel();
-    _controller.stop();
-    setState(() {});
+    setState(() => _isRunning = false);
   }
 
-  void _resetTimer() {
-    _stopTimer();
-    _controller.reset();
-    setState(() {});
+  void _resetStopwatch() {
+    _stopStopwatch();
+    setState(() {
+      _elapsedMs = 0;
+      _isSettingMode = true;
+      _pickedHour = 0;
+      _pickedMin = 0;
+      _pickedSec = 0;
+    });
   }
 
   @override
@@ -43,116 +67,133 @@ class _StopwatchPageState extends State<StopwatchPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
+      backgroundColor: Colors.white, // Sesuaikan warna aplikasi kamu
       appBar: AppBar(
         backgroundColor: Colors.white,
         elevation: 0,
         iconTheme: const IconThemeData(color: Colors.black),
-        title: const Text(
-          'Stopwatch',
-          style: TextStyle(
-            color: Colors.black,
-            fontWeight: FontWeight.w600,
-            fontSize: 20,
-          ),
-        ),
+        title: const Text('Stopwatch Pro',
+            style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold)),
       ),
-      body: Padding(
-        padding: const EdgeInsets.all(24.0),
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            const Icon(Icons.timer_outlined, size: 64, color: Colors.black87),
-            const SizedBox(height: 32),
+      body: Column(
+        children: [
+          const SizedBox(height: 40),
+          // Bagian Display (Set Mode vs Running Mode)
+          Expanded(
+            flex: 3,
+            child: _isSettingMode ? _buildTimePicker() : _buildTimeDisplay(),
+          ),
 
-            Container(
-              padding: const EdgeInsets.symmetric(vertical: 40, horizontal: 20),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade50,
-                borderRadius: BorderRadius.circular(12),
-                border: Border.all(color: Colors.grey.shade200, width: 1.5),
-              ),
-              child: Text(
-                _controller.formatWaktu(_controller.elapsedMilliseconds),
-                textAlign: TextAlign.center,
-                style: const TextStyle(
-                  fontSize: 64,
-                  fontWeight: FontWeight.w900,
-                  fontFamily: 'monospace',
-                  color: Colors.black,
-                  letterSpacing: -2.0,
-                ),
-              ),
-            ),
-            const SizedBox(height: 48),
-
-            Row(
-              children: [
-                Expanded(
-                  child: _buildActionButton(
-                    label: 'Start',
-                    icon: Icons.play_arrow_outlined,
-                    isPrimary: true,
-                    onPressed: _controller.isRunning ? null : _startTimer,
+          // Bagian Tombol Bulat ala iPhone tapi warna aplikasi kamu
+          Expanded(
+            flex: 2,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 40),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  _buildRoundButton(
+                    onTap: _resetStopwatch,
+                    label: "Reset",
+                    backgroundColor: Colors.grey.shade200, // Abu-abu muda
+                    textColor: Colors.black,
                   ),
-                ),
-                const SizedBox(width: 16),
-                Expanded(
-                  child: _buildActionButton(
-                    label: 'Stop',
-                    icon: Icons.pause_outlined,
-                    isPrimary: true,
-                    onPressed: _controller.isRunning ? _stopTimer : null,
+                  _buildRoundButton(
+                    onTap: _isRunning ? _stopStopwatch : _startStopwatch,
+                    label: _isRunning ? "Stop" : "Start",
+                    backgroundColor:
+                        _isRunning ? Colors.grey.shade100 : Colors.black,
+                    textColor: _isRunning ? Colors.redAccent : Colors.white,
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-            const SizedBox(height: 16),
-
-            _buildActionButton(
-              label: 'Reset',
-              icon: Icons.refresh_outlined,
-              isPrimary: false,
-              onPressed: _resetTimer,
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
 
-  Widget _buildActionButton({
-    required String label,
-    required IconData icon,
-    required bool isPrimary,
-    required VoidCallback? onPressed,
-  }) {
-    return ElevatedButton.icon(
-      icon: Icon(icon, size: 24),
-      label: Text(
-        label,
-        style: const TextStyle(
-          fontSize: 16,
-          fontWeight: FontWeight.bold,
-          letterSpacing: 1,
+  Widget _buildTimePicker() {
+    return Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text("Set Waktu Mulai",
+            style: TextStyle(color: Colors.grey, fontSize: 16)),
+        const SizedBox(height: 10),
+        SizedBox(
+          height: 180,
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              _pickerCol("jam", 24, (v) => _pickedHour = v),
+              _pickerCol("menit", 60, (v) => _pickedMin = v),
+              _pickerCol("detik", 60, (v) => _pickedSec = v),
+            ],
+          ),
         ),
+      ],
+    );
+  }
+
+  Widget _pickerCol(String label, int max, ValueChanged<int> onSelect) {
+    return Expanded(
+      child: CupertinoPicker(
+        itemExtent: 38,
+        onSelectedItemChanged: onSelect,
+        children: List.generate(
+            max,
+            (i) => Center(
+                child: Text("$i $label",
+                    style: const TextStyle(
+                        fontSize: 18,
+                        color: Colors.black)))), // Teks hitam di picker
       ),
-      onPressed: onPressed,
-      style: ElevatedButton.styleFrom(
-        backgroundColor: isPrimary ? Colors.black : Colors.white,
-        foregroundColor: isPrimary ? Colors.white : Colors.black,
+    );
+  }
 
-        disabledBackgroundColor: Colors.grey.shade100,
-        disabledForegroundColor: Colors.grey.shade400,
+  Widget _buildTimeDisplay() {
+    return Center(
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          const Text("Waktu Berjalan",
+              style: TextStyle(color: Colors.grey, fontSize: 16)),
+          const SizedBox(height: 10),
+          Text(
+            _controller.formatWaktu(_elapsedMs),
+            style: const TextStyle(
+                fontSize: 64,
+                fontWeight: FontWeight.w200, // Tipis ala iPhone
+                letterSpacing: -2,
+                color: Colors.black // Teks hitam sesuai tema kamu
+                ),
+          ),
+        ],
+      ),
+    );
+  }
 
-        padding: const EdgeInsets.symmetric(vertical: 18),
-        elevation: 0,
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(10),
-          side: isPrimary || onPressed == null
-              ? BorderSide.none
-              : BorderSide(color: Colors.grey.shade300, width: 1.5),
+  Widget _buildRoundButton(
+      {required VoidCallback onTap,
+      required String label,
+      required Color backgroundColor,
+      required Color textColor}) {
+    return InkWell(
+      onTap: onTap,
+      borderRadius: BorderRadius.circular(50),
+      child: Container(
+        width: 80,
+        height: 80,
+        decoration: BoxDecoration(
+          shape: BoxShape.circle,
+          color: backgroundColor,
+          border: Border.all(color: Colors.grey.withOpacity(0.2), width: 1),
+        ),
+        child: Center(
+          child: Text(label,
+              style: TextStyle(
+                  color: textColor, fontWeight: FontWeight.bold, fontSize: 16)),
         ),
       ),
     );
